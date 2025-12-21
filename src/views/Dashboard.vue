@@ -11,8 +11,8 @@
       </template>
 
       <el-descriptions title="User Info" border :column="1">
-        <el-descriptions-item label="Name">{{ user?.name }}</el-descriptions-item>
-        <el-descriptions-item label="Roles">{{ user?.roles.join(', ') }}</el-descriptions-item>
+        <el-descriptions-item label="Username">{{ user?.username }}</el-descriptions-item>
+        <el-descriptions-item label="Role">{{ user?.role }}</el-descriptions-item>
         <el-descriptions-item label="Access Token">
           <el-tooltip :content="accessToken" placement="top">
             <span class="token-text">{{ accessToken ? accessToken.substring(0, 30) + '...' : 'None' }}</span>
@@ -28,7 +28,7 @@
         <Permission code="btn:edit">
           <el-button type="success">Edit Button (Req: btn:edit)</el-button>
         </Permission>
-        
+
         <Permission code="admin">
           <el-button type="danger">Admin Action (Req: admin)</el-button>
         </Permission>
@@ -45,14 +45,14 @@
         <el-button @click="testConcurrency">
           Test Request Queue (Simulate Bootstrapping)
         </el-button>
-        
+
         <el-button type="warning" @click="testPermissionChange">
           Simulate Permission Change (Real-time)
         </el-button>
-        
+
         <el-button type="danger" @click="handleLogout">Logout</el-button>
       </div>
-      
+
       <div class="logs" v-if="logs.length">
           <h4>Logs:</h4>
           <p v-for="(log, i) in logs" :key="i">{{ log }}</p>
@@ -82,16 +82,16 @@ const testConcurrency = async () => {
   log('--- Starting Request Queue Test ---');
   log('1. Manually setting status to "bootstrapping" to simulate app init or refresh...');
   authStore.setBootstrapping();
-  
+
   log('2. Firing 3 parallel requests...');
-  
+
   // These requests should wait until we restore the token
-  apiClient.get('/mock/1').then(() => log('✅ Request 1 Completed'));
-  apiClient.get('/mock/2').then(() => log('✅ Request 2 Completed'));
-  apiClient.get('/mock/3').then(() => log('✅ Request 3 Completed'));
-  
+  apiClient.get('/users').then(() => log('✅ Request 1 Completed'));
+  apiClient.get('/roles').then(() => log('✅ Request 2 Completed'));
+  apiClient.get('/products').then(() => log('✅ Request 3 Completed'));
+
   log('3. Requests are now pending in the queue (Check Network/Console)');
-  
+
   setTimeout(() => {
       log('4. Simulating Refresh Success (Status -> Authenticated)...');
       authStore.setAccessToken('restored_token_' + Date.now());
