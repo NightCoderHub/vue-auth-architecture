@@ -30,7 +30,7 @@
 import { reactive, ref } from 'vue';
 import { login } from '../auth/authService';
 
-const form = reactive({ username: 'admin', password: '123' });
+const form = reactive({ username: 'admin', password: 'password' });
 const loading = ref(false);
 
 const handleLogin = async () => {
