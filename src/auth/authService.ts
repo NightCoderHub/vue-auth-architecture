@@ -17,35 +17,44 @@ export async function login(username: string, password: string) {
 
   console.log('[AuthService] 正在登录...');
 
-  // 1. 登录请求
-  const res = await apiClient.post<ApiResponse<{ accessToken: string, user: UserInfo }>>('/auth/login', { username, password });
-  const { accessToken, user } = res.data.data;
+  try {
+    // 1. 登录请求
+    const res = await apiClient.post<ApiResponse<{ accessToken: string, user: UserInfo }>>('/auth/login', { username, password });
+    const { accessToken, user } = res.data.data;
 
-  // 2. 更新 Store (认证)
-  authStore.setAccessToken(accessToken);
-  authStore.setUserInfo(user);
+    // 2. 更新 Store (认证)
+    authStore.setAccessToken(accessToken);
+    authStore.setUserInfo(user);
 
-  // 3. 获取权限和菜单
-  const [permRes, menuRes] = await Promise.all([
-    apiClient.get<ApiResponse<string[]>>('/user/permissions'),
-    apiClient.get<ApiResponse<any[]>>('/user/menus')
-  ]);
+    // 3. 获取权限和菜单
+    const [permRes, menuRes] = await Promise.all([
+      apiClient.get<ApiResponse<string[]>>('/user/permissions'),
+      apiClient.get<ApiResponse<any[]>>('/user/menus')
+    ]);
 
-  const permissions = permRes.data.data;
-  const menus = menuRes.data.data;
+    const permissions = permRes.data.data;
+    const menus = menuRes.data.data;
 
-  permissionStore.setPermissions(permissions);
-  permissionStore.setMenus(menus);
+    permissionStore.setPermissions(permissions);
+    permissionStore.setMenus(menus);
 
-  // 4. 初始化动态路由
-  buildRoutes(permissions);
+    // 4. 初始化动态路由
+    buildRoutes(permissions);
 
-  // 5. 启动安全通道
-  initPermissionChannel();
+    // 5. 启动安全通道
+    initPermissionChannel();
 
-  // 6. 导航
-  const redirect = router.currentRoute.value.query.redirect as string;
-  router.push(redirect || '/');
+    // 6. 导航
+    const redirect = router.currentRoute.value.query.redirect as string;
+    router.push(redirect || '/');
+  } catch (error) {
+    console.error('[AuthService] 登录过程失败:', error);
+    // 事务回滚：确保登录操作的原子性
+    // 如果获取权限失败，不应保持“已认证”状态
+    authStore.setLoggedOut(); 
+    permissionStore.clear();
+    throw error;
+  }
 }
 
 /**
