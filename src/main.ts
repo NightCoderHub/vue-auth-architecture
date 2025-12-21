@@ -18,8 +18,8 @@ app.use(ElementPlus)
 // 2. 执行引导逻辑
 // 我们在挂载应用前等待认证恢复，
 // 以确保 UI 立即反映正确的状态。
-console.log('[App] Bootstrapping...');
+console.log('[App] 正在启动...');
 bootstrap().then(() => {
-  console.log('[App] Mounting...');
+  console.log('[App] 正在挂载...');
   app.mount('#app')
 });

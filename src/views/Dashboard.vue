@@ -54,7 +54,7 @@
       </div>
 
       <div class="logs" v-if="logs.length">
-          <h4>Logs:</h4>
+          <h4>日志:</h4>
           <p v-for="(log, i) in logs" :key="i">{{ log }}</p>
       </div>
     </el-card>
@@ -79,29 +79,29 @@ const log = (msg: string) => logs.value.push(`[${new Date().toLocaleTimeString()
 const handleLogout = () => logout();
 
 const testConcurrency = async () => {
-  log('--- Starting Request Queue Test ---');
-  log('1. Manually setting status to "bootstrapping" to simulate app init or refresh...');
+  log('--- 开始请求队列测试 ---');
+  log('1. 手动将状态设置为 "bootstrapping" 以模拟应用初始化或刷新...');
   authStore.setBootstrapping();
 
-  log('2. Firing 3 parallel requests...');
+  log('2. 发送 3 个并行请求...');
 
   // 这些请求应该等待直到我们恢复 Token
-  apiClient.get('/users').then(() => log('✅ Request 1 Completed'));
-  apiClient.get('/roles').then(() => log('✅ Request 2 Completed'));
-  apiClient.get('/products').then(() => log('✅ Request 3 Completed'));
+  apiClient.get('/users').then(() => log('✅ 请求 1 已完成'));
+  apiClient.get('/roles').then(() => log('✅ 请求 2 已完成'));
+  apiClient.get('/products').then(() => log('✅ 请求 3 已完成'));
 
-  log('3. Requests are now pending in the queue (Check Network/Console)');
+  log('3. 请求现在正在队列中挂起 (检查 Network/Console)');
 
   setTimeout(() => {
-      log('4. Simulating Refresh Success (Status -> Authenticated)...');
+      log('4. 模拟刷新成功 (状态 -> 已认证)...');
       authStore.setAccessToken('restored_token_' + Date.now());
       // 请求现在应该已解决
   }, 3000);
 };
 
 const testPermissionChange = () => {
-    log('--- Triggering Real-time Permission Change ---');
-    log('Calling window.simulatePermissionChange()...');
+    log('--- 触发实时权限变更 ---');
+    log('正在调用 window.simulatePermissionChange()...');
     (window as any).simulatePermissionChange();
 };
 </script>

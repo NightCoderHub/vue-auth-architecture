@@ -14,12 +14,12 @@ import apiClient from '../axios'; // 用于获取权限
  * 4. 验证当前页面是否仍然可访问。
  */
 export function initPermissionChannel() {
-  console.log('[PermissionChannel] Listening for security events...');
+  console.log('[PermissionChannel] 正在监听安全事件...');
 
   // 模拟实现：暴露一个全局函数以模拟后端推送
   // 用法: window.simulatePermissionChange()
   (window as any).simulatePermissionChange = async () => {
-    console.warn('⚠️ [Security] Permission Change Event Received');
+    console.warn('⚠️ [安全] 收到权限变更事件');
     await handlePermissionUpdate();
   };
 }
@@ -52,14 +52,14 @@ async function handlePermissionUpdate() {
     // 如果路由匹配 'NotFound' (通常用于 404 的名称) 或无匹配项
     // 这意味着路由在 resetRouter 期间被移除且未被添加回来。
     if (!resolved.matched.length || resolved.name === 'NotFound') {
-      console.warn('[Security] Current page access revoked. Redirecting to 403.');
+      console.warn('[安全] 当前页面访问权限被撤销。重定向至 403。');
       router.replace('/403');
     } else {
-      console.log('[Security] Current page access verified.');
+      console.log('[安全] 当前页面访问权限已验证。');
     }
 
   } catch (error) {
-    console.error('[PermissionChannel] Update failed:', error);
+    console.error('[PermissionChannel] 更新失败:', error);
     // 后备方案：强制退出或跳转至错误页面
     router.replace('/login');
   }

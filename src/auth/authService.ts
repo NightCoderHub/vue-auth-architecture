@@ -15,7 +15,7 @@ export async function login(username: string, password: string) {
   const authStore = useAuthStore();
   const permissionStore = usePermissionStore();
 
-  console.log('[AuthService] Logging in...');
+  console.log('[AuthService] 正在登录...');
 
   // 1. 登录请求
   const res = await apiClient.post<ApiResponse<{ accessToken: string, user: UserInfo }>>('/auth/login', { username, password });
@@ -62,7 +62,7 @@ export async function restoreSession() {
   if (!token) return false;
 
   try {
-    console.log('[AuthService] Token restored. Fetching profile & permissions...');
+    console.log('[AuthService] Token 已恢复。正在获取个人资料和权限...');
 
     // 2. 并行获取个人资料、权限、菜单
     // 我们假设如果刷新成功，后端即为可用状态。
@@ -99,9 +99,9 @@ export function logout() {
   // 1. 调用后端退出登录（以清除 Cookie）
   try {
     apiClient.post('/auth/logout').catch(() => {});
-    console.log('[AuthService] Backend logout called');
+    console.log('[AuthService] 已调用后端退出登录');
   } catch (e) {
-    console.warn('[AuthService] Backend logout failed', e);
+    console.warn('[AuthService] 后端退出登录失败', e);
   }
 
   // 2. 清除状态

@@ -16,22 +16,22 @@ export async function bootstrap() {
   authStore.setBootstrapping();
   
   try {
-    console.log('[Bootstrap] Restoring session...');
+    console.log('[Bootstrap] 正在恢复会话...');
     
     // 委托给 AuthService
     const restored = await restoreSession();
     
     if (restored) {
-      console.log('[Bootstrap] Session fully restored.');
+      console.log('[Bootstrap] 会话已完全恢复。');
     } else {
-      console.log('[Bootstrap] No active session.');
+      console.log('[Bootstrap] 无活动会话。');
       // 确保处于 logged_out 状态（restoreSession 处理错误时的退出，但 ensureAuthReady 处理简单的无 Token 情况）
       if (authStore.status !== 'logged_out') {
           authStore.setLoggedOut();
       }
     }
   } catch (error) {
-    console.error('[Bootstrap] Failed:', error);
+    console.error('[Bootstrap] 失败:', error);
     authStore.setLoggedOut();
   }
 }

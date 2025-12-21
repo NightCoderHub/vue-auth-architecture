@@ -47,5 +47,5 @@ export function buildRoutes(permissions: string[]) {
     }
   });
   
-  console.log('[Permission] Routes Rebuilt:', addedRouteNames);
+  console.log('[Permission] 路由已重建:', addedRouteNames);
 }

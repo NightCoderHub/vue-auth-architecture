@@ -16,7 +16,7 @@ router.beforeEach(async (to, from, next) => {
   // 1. 关键：等待认证状态稳定
   // 这可以防止刷新时的“登录页闪烁”。
   if (!authStore.isReady) {
-    console.log('[Router] Waiting for Auth Ready...');
+    console.log('[Router] 正在等待认证就绪...');
     await ensureAuthReady();
   }
 

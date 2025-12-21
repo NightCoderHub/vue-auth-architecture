@@ -14,7 +14,7 @@ const apiClient = axios.create({
 // 处理 Token 过期和重试的辅助函数
 async function handleTokenExpired(originalRequest: InternalAxiosRequestConfig & { _retry?: boolean }) {
   if (originalRequest._retry) {
-    return Promise.reject(new Error('Token refresh loop detected'));
+    return Promise.reject(new Error('检测到 Token 刷新循环'));
   }
 
   originalRequest._retry = true;
@@ -33,7 +33,7 @@ async function handleTokenExpired(originalRequest: InternalAxiosRequestConfig & 
   } else {
     // 刷新失败 -> 重定向到登录页
     router.push(`/login?redirect=${encodeURIComponent(router.currentRoute.value.fullPath)}`);
-    return Promise.reject(new Error('Session expired'));
+    return Promise.reject(new Error('会话已过期'));
   }
 }
 
@@ -76,7 +76,7 @@ apiClient.interceptors.response.use(
 
     // 2. 处理 HTTP 403 (禁止) - 权限被拒绝
     if (error.response?.status === 403) {
-        console.error('Permission Denied (403)');
+        console.error('权限被拒绝 (403)');
         // 可选：重定向到 403 页面
     }
 

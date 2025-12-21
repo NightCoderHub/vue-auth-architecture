@@ -51,10 +51,10 @@ export async function ensureAuthReady(): Promise<string | null> {
         return data.accessToken as string;
       }
 
-      throw new Error('Invalid Refresh Response');
+      throw new Error('无效的刷新响应');
     })
     .catch(error => {
-      console.warn('[Auth] Refresh failed:', error);
+      console.warn('[Auth] 刷新失败:', error);
       authStore.setLoggedOut();
       return null;
     })
