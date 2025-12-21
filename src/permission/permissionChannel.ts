@@ -5,7 +5,7 @@ import apiClient from '../axios'; // 用于获取权限
 
 /**
  * 实时权限更新通道
- * 
+ *
  * 建立 WebSocket/SSE 连接以监听权限变更。
  * 当发生 'PERMISSION_UPDATED' 事件时：
  * 1. 清除本地权限数据。
@@ -34,12 +34,12 @@ async function handlePermissionUpdate() {
   try {
     // 2. 重新获取权限
     // 在真实应用中: const res = await apiClient.get('/user/permissions');
-    console.log('[PermissionChannel] Fetching new permissions...');
-    
+    console.log('[PermissionChannel] 正在获取新权限...');
+
     // 模拟延迟和响应
-    await new Promise(r => setTimeout(r, 500)); 
+    await new Promise(r => setTimeout(r, 500));
     const newPermissions = ['admin', 'user:read']; // 模拟的新权限
-    
+
     permissionStore.setPermissions(newPermissions);
 
     // 3. 重建路由
