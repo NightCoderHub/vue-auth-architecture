@@ -5,52 +5,52 @@
         <div class="header">
           <h2>Dashboard</h2>
           <el-tag :type="status === 'authenticated' ? 'success' : 'danger'">
-            {{ status.toUpperCase() }}
+            {{ status }}
           </el-tag>
         </div>
       </template>
-
-      <el-descriptions title="User Info" border :column="1">
-        <el-descriptions-item label="Username">{{ user?.username }}</el-descriptions-item>
-        <el-descriptions-item label="Role">{{ user?.role }}</el-descriptions-item>
-        <el-descriptions-item label="Access Token">
+      {{ user }}
+      <el-descriptions title="用户信息" border :column="1">
+        <el-descriptions-item label="用户名">{{ user?.username }}</el-descriptions-item>
+        <el-descriptions-item label="角色">{{ user?.role }}</el-descriptions-item>
+        <el-descriptions-item label="访问令牌">
           <el-tooltip :content="accessToken" placement="top">
             <span class="token-text">{{ accessToken ? accessToken.substring(0, 30) + '...' : 'None' }}</span>
           </el-tooltip>
-          <span class="note">(In Memory Only)</span>
+          <span class="note">(仅在内存中存储)</span>
         </el-descriptions-item>
       </el-descriptions>
 
       <el-divider />
 
-      <h3>Permission Control Demo (Directives/Components)</h3>
+      <h3>权限控制演示 (指令/组件)</h3>
       <div class="demo-section">
         <Permission code="btn:edit">
-          <el-button type="success">Edit Button (Req: btn:edit)</el-button>
+          <el-button type="success">编辑按钮 (需权限: btn:edit)</el-button>
         </Permission>
 
         <Permission code="admin">
-          <el-button type="danger">Admin Action (Req: admin)</el-button>
+          <el-button type="danger">管理员操作 (需权限: admin)</el-button>
         </Permission>
 
         <Permission code="super:delete">
-           <el-button type="info">Super Delete (Hidden)</el-button>
+           <el-button type="info">超级删除 (隐藏)</el-button>
         </Permission>
       </div>
 
       <el-divider />
 
-      <h3>Architecture Validation</h3>
+      <h3>架构验证</h3>
       <div class="actions">
         <el-button @click="testConcurrency">
-          Test Request Queue (Simulate Bootstrapping)
+          测试请求队列 (模拟应用初始化或刷新)
         </el-button>
 
         <el-button type="warning" @click="testPermissionChange">
-          Simulate Permission Change (Real-time)
+          模拟权限变更 (实时)
         </el-button>
 
-        <el-button type="danger" @click="handleLogout">Logout</el-button>
+        <el-button type="danger" @click="handleLogout">注销</el-button>
       </div>
 
       <div class="logs" v-if="logs.length">
