@@ -9,6 +9,14 @@ import type { ApiResponse, UserInfo } from './authTypes';
 
 /**
  * 认证业务逻辑
+ *
+ * 1. 登录请求
+ * 2. 更新 Store (认证)
+ * 3. 并行获取个人资料、权限、菜单
+ * 4. 更新 Stores
+ * 5. 初始化动态路由
+ * 6. 启动安全通道
+ * 7. 导航
  */
 
 export async function login(username: string, password: string) {
@@ -19,39 +27,46 @@ export async function login(username: string, password: string) {
 
   try {
     // 1. 登录请求
-    const res = await apiClient.post<ApiResponse<{ accessToken: string, user: UserInfo }>>('/auth/login', { username, password });
-    const { accessToken, user } = res.data.data;
+    const res = await apiClient.post<ApiResponse<{ accessToken: string }>>('/auth/login', { username, password });
+    const { accessToken } = res.data.data;
 
     // 2. 更新 Store (认证)
+    // 必须先设置 Token，否则后续的 API 请求无法通过拦截器的鉴权
     authStore.setAccessToken(accessToken);
-    authStore.setUserInfo(user);
 
-    // 3. 获取权限和菜单
-    const [permRes, menuRes] = await Promise.all([
+    console.log('[AuthService] Token 获取成功。正在并行获取用户资料、权限和菜单...');
+
+    // 3. 并行获取个人资料、权限、菜单
+    // 保持与 restoreSession 一致的并行请求逻辑
+    const [userRes, permRes, menuRes] = await Promise.all([
+      apiClient.get<ApiResponse<UserInfo>>('/user/profile'),
       apiClient.get<ApiResponse<string[]>>('/user/permissions'),
       apiClient.get<ApiResponse<any[]>>('/user/menus')
     ]);
 
+    const user = userRes.data.data;
     const permissions = permRes.data.data;
     const menus = menuRes.data.data;
 
+    // 4. 更新 Stores
+    authStore.setUserInfo(user);
     permissionStore.setPermissions(permissions);
     permissionStore.setMenus(menus);
 
-    // 4. 初始化动态路由
+    // 5. 初始化动态路由
     buildRoutes(permissions);
 
-    // 5. 启动安全通道
+    // 6. 启动安全通道
     initPermissionChannel();
 
-    // 6. 导航
+    // 7. 导航
     const redirect = router.currentRoute.value.query.redirect as string;
     router.push(redirect || '/');
   } catch (error) {
     console.error('[AuthService] 登录过程失败:', error);
     // 事务回滚：确保登录操作的原子性
     // 如果获取权限失败，不应保持“已认证”状态
-    authStore.setLoggedOut(); 
+    authStore.setLoggedOut();
     permissionStore.clear();
     throw error;
   }
