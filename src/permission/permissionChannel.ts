@@ -2,6 +2,7 @@ import { usePermissionStore } from './permissionStore';
 import { resetRouter, buildRoutes } from './routeBuilder';
 import router from '../router';
 import apiClient from '../axios'; // 用于获取权限
+import type { ApiResponse } from '../auth/authTypes';
 
 /**
  * 实时权限更新通道
@@ -33,14 +34,18 @@ async function handlePermissionUpdate() {
 
   try {
     // 2. 重新获取权限
-    // 在真实应用中: const res = await apiClient.get('/user/permissions');
     console.log('[PermissionChannel] 正在获取新权限...');
 
-    // 模拟延迟和响应
-    await new Promise(r => setTimeout(r, 500));
-    const newPermissions = ['admin', 'user:read']; // 模拟的新权限
+    const [permRes, menuRes] = await Promise.all([
+      apiClient.get<ApiResponse<string[]>>('/user/permissions'),
+      apiClient.get<ApiResponse<any[]>>('/user/menus')
+    ]);
+
+    const newPermissions = permRes.data.data;
+    const newMenus = menuRes.data.data;
 
     permissionStore.setPermissions(newPermissions);
+    permissionStore.setMenus(newMenus);
 
     // 3. 重建路由
     buildRoutes(newPermissions);
