@@ -1,23 +1,23 @@
 import { usePermissionStore } from './permissionStore';
 import { resetRouter, buildRoutes } from './routeBuilder';
 import router from '../router';
-import apiClient from '../axios'; // For fetching permissions
+import apiClient from '../axios'; // 用于获取权限
 
 /**
- * Real-time Permission Update Channel
+ * 实时权限更新通道
  * 
- * Establishes a WebSocket/SSE connection to listen for permission changes.
- * When a 'PERMISSION_UPDATED' event occurs:
- * 1. Clear local permission data.
- * 2. Re-fetch latest permissions from API.
- * 3. Rebuild Vue Router.
- * 4. Verify if current page is still accessible.
+ * 建立 WebSocket/SSE 连接以监听权限变更。
+ * 当发生 'PERMISSION_UPDATED' 事件时：
+ * 1. 清除本地权限数据。
+ * 2. 从 API 重新获取最新权限。
+ * 3. 重建 Vue Router。
+ * 4. 验证当前页面是否仍然可访问。
  */
 export function initPermissionChannel() {
   console.log('[PermissionChannel] Listening for security events...');
 
-  // Mock Implementation: Expose a global function to simulate Backend Push
-  // Usage: window.simulatePermissionChange()
+  // 模拟实现：暴露一个全局函数以模拟后端推送
+  // 用法: window.simulatePermissionChange()
   (window as any).simulatePermissionChange = async () => {
     console.warn('⚠️ [Security] Permission Change Event Received');
     await handlePermissionUpdate();
@@ -27,30 +27,30 @@ export function initPermissionChannel() {
 async function handlePermissionUpdate() {
   const permissionStore = usePermissionStore();
 
-  // 1. Clear Old Data (Fail-safe)
+  // 1. 清除旧数据（故障安全）
   permissionStore.clear();
   resetRouter();
 
   try {
-    // 2. Re-fetch Permissions
-    // In real app: const res = await apiClient.get('/user/permissions');
+    // 2. 重新获取权限
+    // 在真实应用中: const res = await apiClient.get('/user/permissions');
     console.log('[PermissionChannel] Fetching new permissions...');
     
-    // Mock Delay & Response
+    // 模拟延迟和响应
     await new Promise(r => setTimeout(r, 500)); 
-    const newPermissions = ['admin', 'user:read']; // Simulated new permissions
+    const newPermissions = ['admin', 'user:read']; // 模拟的新权限
     
     permissionStore.setPermissions(newPermissions);
 
-    // 3. Rebuild Routes
+    // 3. 重建路由
     buildRoutes(newPermissions);
 
-    // 4. Security Check: Is current page still allowed?
+    // 4. 安全检查：当前页面是否仍然允许访问？
     const currentPath = router.currentRoute.value.fullPath;
     const resolved = router.resolve(currentPath);
 
-    // If route matches 'NotFound' (name usually used for 404) or has no matches
-    // It means the route was removed during resetRouter and not added back.
+    // 如果路由匹配 'NotFound' (通常用于 404 的名称) 或无匹配项
+    // 这意味着路由在 resetRouter 期间被移除且未被添加回来。
     if (!resolved.matched.length || resolved.name === 'NotFound') {
       console.warn('[Security] Current page access revoked. Redirecting to 403.');
       router.replace('/403');
@@ -60,7 +60,7 @@ async function handlePermissionUpdate() {
 
   } catch (error) {
     console.error('[PermissionChannel] Update failed:', error);
-    // Fallback: Force logout or redirect to error page
+    // 后备方案：强制退出或跳转至错误页面
     router.replace('/login');
   }
 }

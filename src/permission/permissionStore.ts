@@ -2,10 +2,10 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const usePermissionStore = defineStore('permission', () => {
-  // Permission Codes (e.g., 'user:add', 'order:delete')
+  // 权限代码 (例如: 'user:add', 'order:delete')
   const permissions = ref<string[]>([]);
   
-  // Menu Structure (Tree)
+  // 菜单结构 (树形)
   const menus = ref<any[]>([]);
 
   function setPermissions(perms: string[]) {

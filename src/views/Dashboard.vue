@@ -85,7 +85,7 @@ const testConcurrency = async () => {
 
   log('2. Firing 3 parallel requests...');
 
-  // These requests should wait until we restore the token
+  // 这些请求应该等待直到我们恢复 Token
   apiClient.get('/users').then(() => log('✅ Request 1 Completed'));
   apiClient.get('/roles').then(() => log('✅ Request 2 Completed'));
   apiClient.get('/products').then(() => log('✅ Request 3 Completed'));
@@ -95,7 +95,7 @@ const testConcurrency = async () => {
   setTimeout(() => {
       log('4. Simulating Refresh Success (Status -> Authenticated)...');
       authStore.setAccessToken('restored_token_' + Date.now());
-      // Requests should resolve now
+      // 请求现在应该已解决
   }, 3000);
 };
 

@@ -3,44 +3,44 @@ import { useAuthStore } from '../auth/authStore';
 import { ensureAuthReady } from '../auth/refresh';
 
 /**
- * Global Route Guard
+ * 全局路由守卫
  * 
- * Enforces security policies:
- * 1. Wait for Auth Initialization (Bootstrapping).
- * 2. Redirect unauthenticated users to Login.
- * 3. Redirect unauthorized users (403) - *To be implemented with permission check*
+ * 强制执行安全策略：
+ * 1. 等待认证初始化（引导程序）。
+ * 2. 将未认证用户重定向到登录页。
+ * 3. 重定向未授权用户 (403) - *待通过权限检查实现*
  */
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
 
-  // 1. Critical: Wait for Auth State to be Stable
-  // This prevents "Login Page Flash" on refresh.
+  // 1. 关键：等待认证状态稳定
+  // 这可以防止刷新时的“登录页闪烁”。
   if (!authStore.isReady) {
     console.log('[Router] Waiting for Auth Ready...');
     await ensureAuthReady();
   }
 
-  // 2. Determine Access Requirement
-  // Use 'requiresAuth' meta or default to private
+  // 2. 确定访问要求
+  // 使用 'requiresAuth' meta 或默认为私有
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const isPublic = ['/login', '/403'].includes(to.path);
 
   if (authStore.isAuthenticated) {
-    // User is logged in
+    // 用户已登录
     if (to.path === '/login') {
       return next('/');
     }
     
-    // Permission Check (Placeholder)
+    // 权限检查（占位符）
     // if (to.meta.permissions && !authStore.hasPermission(to.meta.permissions)) {
     //   return next('/403');
     // }
     
     next();
   } else {
-    // User is NOT logged in
+    // 用户未登录
     if (requiresAuth || !isPublic) {
-      // Redirect to Login with return url
+      // 重定向到登录页并附带返回 URL
       return next(`/login?redirect=${encodeURIComponent(to.fullPath)}`);
     }
     next();

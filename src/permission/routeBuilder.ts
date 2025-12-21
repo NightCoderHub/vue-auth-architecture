@@ -1,13 +1,13 @@
 import router from '../router';
 import type { RouteRecordRaw } from 'vue-router';
 
-// Track dynamically added routes for cleanup
+// 追踪动态添加的路由以便清理
 let addedRouteNames: string[] = [];
 
 /**
- * Reset Router
- * Removes all dynamically added routes.
- * Must be called before rebuilding routes (e.g. on permission change).
+ * 重置 Router
+ * 移除所有动态添加的路由。
+ * 必须在重建路由前调用（例如在权限变更时）。
  */
 export function resetRouter() {
   addedRouteNames.forEach(name => {
@@ -19,12 +19,12 @@ export function resetRouter() {
 }
 
 /**
- * Build and Register Routes
- * Maps permissions to actual Route Records.
+ * 构建并注册路由
+ * 将权限映射到实际的路由记录。
  */
 export function buildRoutes(permissions: string[]) {
-  // In a real app, this would be a mapping of { permission -> route }
-  // or a recursive filter on a full route tree.
+  // 在真实应用中，这将是 { permission -> route } 的映射
+  // 或者是全量路由树的递归过滤。
   
   const dynamicRoutes: RouteRecordRaw[] = [
     {
@@ -35,11 +35,11 @@ export function buildRoutes(permissions: string[]) {
     }
   ];
 
-  // Logic: Add routes if user has permissions
-  // For demo: Always add them if this function is called (assuming backend sent valid perms)
+  // 逻辑：如果用户有权限则添加路由
+  // 演示用：如果调用此函数则始终添加（假设后端发送了有效权限）
   
   dynamicRoutes.forEach(route => {
-    // Note: In Vue Router 4, addRoute parentName is optional
+    // 注意：在 Vue Router 4 中，addRoute parentName 是可选的
     router.addRoute(route);
     
     if (route.name) {

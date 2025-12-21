@@ -8,7 +8,7 @@ import router from '../router';
 import type { ApiResponse, UserInfo } from './authTypes';
 
 /**
- * Auth Business Logic
+ * 认证业务逻辑
  */
 
 export async function login(username: string, password: string) {
@@ -17,15 +17,15 @@ export async function login(username: string, password: string) {
 
   console.log('[AuthService] Logging in...');
 
-  // 1. Login Request
+  // 1. 登录请求
   const res = await apiClient.post<ApiResponse<{ accessToken: string, user: UserInfo }>>('/auth/login', { username, password });
   const { accessToken, user } = res.data.data;
 
-  // 2. Update Store (Auth)
+  // 2. 更新 Store (认证)
   authStore.setAccessToken(accessToken);
   authStore.setUserInfo(user);
 
-  // 3. Fetch Permissions & Menus
+  // 3. 获取权限和菜单
   const [permRes, menuRes] = await Promise.all([
     apiClient.get<ApiResponse<string[]>>('/user/permissions'),
     apiClient.get<ApiResponse<any[]>>('/user/menus')
@@ -37,56 +37,56 @@ export async function login(username: string, password: string) {
   permissionStore.setPermissions(permissions);
   permissionStore.setMenus(menus);
 
-  // 4. Initialize Dynamic Routes
+  // 4. 初始化动态路由
   buildRoutes(permissions);
 
-  // 5. Start Security Channel
+  // 5. 启动安全通道
   initPermissionChannel();
 
-  // 6. Navigate
+  // 6. 导航
   const redirect = router.currentRoute.value.query.redirect as string;
   router.push(redirect || '/');
 }
 
 /**
- * Restore Session (Page Reload / Bootstrap)
+ * 恢复会话（页面刷新 / 引导程序）
  *
- * Attempts to refresh the token and fetch fresh user profile/permissions.
+ * 尝试刷新 Token 并获取最新的用户信息/权限。
  */
 export async function restoreSession() {
   const authStore = useAuthStore();
   const permissionStore = usePermissionStore();
 
-  // 1. Try to restore token (via Refresh Token Cookie)
+  // 1. 尝试恢复 Token（通过 Refresh Token Cookie）
   const token = await ensureAuthReady();
   if (!token) return false;
 
   try {
     console.log('[AuthService] Token restored. Fetching profile & permissions...');
 
-    // 2. Fetch Profile, Permissions, Menus (Parallel)
-    // We assume if refresh succeeded, the backend is available.
+    // 2. 并行获取个人资料、权限、菜单
+    // 我们假设如果刷新成功，后端即为可用状态。
     const [userRes, permRes, menuRes] = await Promise.all([
         apiClient.get<ApiResponse<UserInfo>>('/user/profile'),
         apiClient.get<ApiResponse<string[]>>('/user/permissions'),
         apiClient.get<ApiResponse<any[]>>('/user/menus')
     ]);
 
-    // 3. Update Stores
-    // API Response structure: { code: 200, data: ... }
-    // Note: apiClient returns AxiosResponse, so we access .data for body, then .data for payload
+    // 3. 更新 Stores
+    // API 响应结构: { code: 200, data: ... }
+    // 注意：apiClient 返回 AxiosResponse，所以我们访问 .data 获取 body，然后访问 .data 获取 payload
     authStore.setUserInfo(userRes.data.data);
     permissionStore.setPermissions(permRes.data.data);
     permissionStore.setMenus(menuRes.data.data);
 
-    // 4. Rebuild Routes
+    // 4. 重建路由
     buildRoutes(permRes.data.data);
     initPermissionChannel();
 
     return true;
   } catch (error) {
     console.warn('[AuthService] Restore session failed:', error);
-    // If we have a token but can't fetch profile, it's safer to logout
+    // 如果我们有 Token 但无法获取个人资料，为了安全起见应退出登录
     logout();
     return false;
   }
@@ -96,7 +96,7 @@ export function logout() {
   const authStore = useAuthStore();
   const permissionStore = usePermissionStore();
 
-  // 1. Call Backend Logout (to clear cookie)
+  // 1. 调用后端退出登录（以清除 Cookie）
   try {
     apiClient.post('/auth/logout').catch(() => {});
     console.log('[AuthService] Backend logout called');
@@ -104,11 +104,11 @@ export function logout() {
     console.warn('[AuthService] Backend logout failed', e);
   }
 
-  // 2. Clear State
+  // 2. 清除状态
   authStore.setLoggedOut();
   permissionStore.clear();
   resetRouter();
 
-  // 3. Navigate to Login
+  // 3. 跳转至登录页
   router.push('/login');
 }

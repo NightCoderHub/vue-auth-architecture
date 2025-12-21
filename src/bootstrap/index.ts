@@ -2,30 +2,30 @@ import { useAuthStore } from '../auth/authStore';
 import { restoreSession } from '../auth/authService';
 
 /**
- * Application Bootstrap Logic
+ * 应用引导逻辑
  * 
- * Called before mounting the Vue app to ensure:
- * 1. Auth state is restored (from HttpOnly Cookie).
- * 2. Security channels are established.
- * 3. User profile and permissions are fetched.
+ * 在挂载 Vue 应用前调用，以确保：
+ * 1. 认证状态已恢复（从 HttpOnly Cookie）。
+ * 2. 安全通道已建立。
+ * 3. 用户资料和权限已获取。
  */
 export async function bootstrap() {
   const authStore = useAuthStore();
   
-  // Mark as bootstrapping to block UI rendering if needed
+  // 标记为 bootstrapping 以在需要时阻止 UI 渲染
   authStore.setBootstrapping();
   
   try {
     console.log('[Bootstrap] Restoring session...');
     
-    // Delegate to AuthService
+    // 委托给 AuthService
     const restored = await restoreSession();
     
     if (restored) {
       console.log('[Bootstrap] Session fully restored.');
     } else {
       console.log('[Bootstrap] No active session.');
-      // Ensure we are in logged_out state (restoreSession handles logout on error, but ensureAuthReady handles simple no-token)
+      // 确保处于 logged_out 状态（restoreSession 处理错误时的退出，但 ensureAuthReady 处理简单的无 Token 情况）
       if (authStore.status !== 'logged_out') {
           authStore.setLoggedOut();
       }

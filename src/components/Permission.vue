@@ -12,10 +12,10 @@ const props = defineProps<{
 
 const permissionStore = usePermissionStore();
 
-// Check if user has the specific permission code
+// 检查用户是否拥有特定权限代码
 const hasAccess = computed(() => {
-  // If 'admin' role implies all permissions, handle it here.
-  // For now, strict match.
+  // 如果 'admin' 角色暗示所有权限，在此处理。
+  // 目前，严格匹配。
   return permissionStore.permissions.includes(props.code);
 });
 </script>

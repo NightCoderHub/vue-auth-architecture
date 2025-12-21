@@ -3,19 +3,19 @@ import { ref, computed } from 'vue';
 import type { AuthStatus, UserInfo } from './authTypes';
 
 /**
- * Authentication State Machine Store
+ * 认证状态机 Store
  * 
- * Manages the lifecycle of the user's authentication state.
- * Does NOT persist the Access Token (Security Requirement).
+ * 管理用户认证状态的生命周期。
+ * 不持久化 Access Token（安全要求）。
  */
 export const useAuthStore = defineStore('auth', () => {
-  // --- State ---
+  // --- 状态 ---
   const status = ref<AuthStatus>('idle');
   const accessToken = ref<string>('');
   const userInfo = ref<UserInfo | null>(null);
 
   // --- Getters ---
-  // Used by Router Guards to decide if we can proceed
+  // 被路由守卫用于判断是否可以继续
   const isReady = computed(() => status.value !== 'idle' && status.value !== 'bootstrapping');
   const isAuthenticated = computed(() => status.value === 'authenticated');
 
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
   
   function setAccessToken(token: string) {
     accessToken.value = token;
-    // Transition to authenticated state
+    // 转换到已认证状态
     if (status.value !== 'authenticated') {
       status.value = 'authenticated';
     }

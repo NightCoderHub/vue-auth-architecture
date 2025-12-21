@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/',
     name: 'Dashboard',
-    component: () => import('../views/Dashboard.vue'), // Lazy load
+    component: () => import('../views/Dashboard.vue'), // 懒加载
     meta: { requiresAuth: true }
   },
   {
