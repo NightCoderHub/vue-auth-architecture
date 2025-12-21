@@ -4,9 +4,14 @@
       <template #header>
         <div class="header">
           <h2>Dashboard</h2>
-          <el-tag :type="status === 'authenticated' ? 'success' : 'danger'">
-            {{ status }}
-          </el-tag>
+          <div style="display: flex; gap: 10px;">
+            <el-tag :type="wsStatus === 'connected' ? 'success' : (wsStatus === 'connecting' ? 'warning' : 'info')">
+              WS: {{ wsStatus }}
+            </el-tag>
+            <el-tag :type="status === 'authenticated' ? 'success' : 'danger'">
+              Auth: {{ status }}
+            </el-tag>
+          </div>
         </div>
       </template>
       <el-descriptions title="用户信息" border :column="1">
@@ -29,12 +34,36 @@
       <h3>权限控制演示 (指令/组件)</h3>
       <div class="demo-section">
 
+        <Permission code="user:view">
+          <el-button>查看用户 (需权限: user:view)</el-button>
+        </Permission>
+
+        <Permission code="user:add">
+          <el-button type="primary">添加用户 (需权限: user:add)</el-button>
+        </Permission>
+
         <Permission code="user:edit">
-          <el-button type="success">编辑按钮 (需权限: user:edit)</el-button>
+          <el-button type="success">编辑用户 (需权限: user:edit)</el-button>
         </Permission>
 
         <Permission code="user:delete">
-          <el-button type="danger">管理员操作 (需权限: user:delete)</el-button>
+          <el-button type="danger">删除用户 (需权限: user:delete)</el-button>
+        </Permission>
+
+        <Permission code="role:view">
+          <el-button>查看角色 (需权限: role:view)</el-button>
+        </Permission>
+
+        <Permission code="role:add">
+          <el-button type="primary" plain>添加角色 (需权限: role:add)</el-button>
+        </Permission>
+
+        <Permission code="role:edit">
+          <el-button type="success" plain>编辑角色 (需权限: role:edit)</el-button>
+        </Permission>
+
+        <Permission code="role:delete">
+          <el-button type="danger" plain>删除角色 (需权限: role:delete)</el-button>
         </Permission>
 
         <Permission code="super:delete">
@@ -49,9 +78,11 @@
         <el-button @click="testConcurrency">
           测试请求队列 (模拟应用初始化或刷新)
         </el-button>
-
-        <el-button type="warning" @click="testPermissionChange">
-          模拟权限变更 (实时)
+        <el-button type="primary" @click="updateRolePermissions">
+          更新角色权限 (实时)
+        </el-button>
+        <el-button type="warning" @click="updateUserRole">
+          修改用户角色 (实时)
         </el-button>
 
         <el-button type="danger" @click="handleLogout">注销</el-button>
@@ -66,11 +97,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useAuthStore } from '../auth/authStore';
 import { logout } from '../auth/authService';
 import Permission from '../components/Permission.vue';
 import apiClient from '../axios';
+import { wsStatus, closePermissionChannel } from '../permission/permissionChannel';
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.userInfo);
@@ -80,9 +112,18 @@ const logs = ref<string[]>([]);
 
 const log = (msg: string) => logs.value.push(`[${new Date().toLocaleTimeString()}] ${msg}`);
 
-const handleLogout = () => logout();
+// 监听 WebSocket 状态变化并记录日志
+watch(wsStatus, (newStatus) => {
+  log(`WebSocket 状态变更: ${newStatus}`);
+});
+
+const handleLogout = () => {
+  closePermissionChannel(); // 确保注销时关闭连接
+  logout();
+};
 
 const testConcurrency = async () => {
+  logs.value = [];
   log('--- 开始请求队列测试 ---');
   log('1. 手动将状态设置为 "bootstrapping" 以模拟应用初始化或刷新...');
   authStore.setBootstrapping();
@@ -103,10 +144,45 @@ const testConcurrency = async () => {
   }, 3000);
 };
 
-const testPermissionChange = () => {
-    log('--- 触发实时权限变更 ---');
-    log('正在调用 window.simulatePermissionChange()...');
-    (window as any).simulatePermissionChange();
+
+const updateRolePermissions = async () => {
+    log('--- 更新角色权限测试 ---');
+    // 我们要更新 ID 为 2 的角色：Editor
+    const roleId = 2;
+    // 给 Editor 角色分配 View Users, Add User, Edit User 权限
+    const newPermissionIds = [1, 2, 3];
+
+    log(`正在更新角色 ID ${roleId} 的权限...`);
+
+    try {
+        await apiClient.put(`/roles/${roleId}/permissions`, {
+            permissionIds: newPermissionIds
+        });
+        log('✅ 角色权限更新成功');
+        log('注意：如果这是当前用户的角色，服务端应触发 WebSocket 推送更新权限。');
+    } catch (e) {
+        log(`❌ 更新失败: ${e}`);
+    }
+};
+
+const updateUserRole = async () => {
+    log('--- 修改用户角色测试 ---');
+    // 我们要更新 ID 为 2 的用户：Editor
+    const userId = 2;
+    // 给 Editor 角色分配 Admin, Editor 权限
+    const newRoleIds = [1,2];
+
+    log(`正在更新用户 ID ${userId} 的角色...`);
+
+    try {
+        await apiClient.put(`/users/${userId}/roles`, {
+            roleIds: newRoleIds
+        });
+        log('✅ 用户角色更新成功');
+        log('注意：如果这是当前用户的角色，服务端应触发 WebSocket 推送更新权限。');
+    } catch (e) {
+        log(`❌ 更新失败: ${e}`);
+    }
 };
 </script>
 
@@ -123,6 +199,7 @@ const testPermissionChange = () => {
 }
 .demo-section {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 .actions {
