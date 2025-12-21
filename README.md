@@ -34,6 +34,13 @@
 
 ---
 
+## 🤝 相关项目
+
+* <a href="https://github.com/NightCoderHub/node-api-server" target="_blank">Node.js API Server (配套后端)</a>
+    > 提供 HttpOnly Cookie 管理、双 Token 刷新及 WebSocket 权限实时推送接口，与前端共同构成完整的鉴权体系。
+
+---
+
 ## 🔐 整体架构设计概览
 
 ```
