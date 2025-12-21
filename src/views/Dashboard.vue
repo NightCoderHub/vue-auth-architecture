@@ -9,10 +9,13 @@
           </el-tag>
         </div>
       </template>
-      {{ user }}
       <el-descriptions title="用户信息" border :column="1">
         <el-descriptions-item label="用户名">{{ user?.username }}</el-descriptions-item>
-        <el-descriptions-item label="角色">{{ user?.role }}</el-descriptions-item>
+        <el-descriptions-item label="角色">
+          <el-tag v-for="role in user?.roles" :key="role.id" :type="role.name === 'admin' ? 'danger' : 'primary'">
+            {{ role.name }}
+          </el-tag>
+        </el-descriptions-item>
         <el-descriptions-item label="访问令牌">
           <el-tooltip :content="accessToken" placement="top">
             <span class="token-text">{{ accessToken ? accessToken.substring(0, 30) + '...' : 'None' }}</span>
@@ -25,12 +28,13 @@
 
       <h3>权限控制演示 (指令/组件)</h3>
       <div class="demo-section">
-        <Permission code="btn:edit">
-          <el-button type="success">编辑按钮 (需权限: btn:edit)</el-button>
+
+        <Permission code="user:edit">
+          <el-button type="success">编辑按钮 (需权限: user:edit)</el-button>
         </Permission>
 
-        <Permission code="admin">
-          <el-button type="danger">管理员操作 (需权限: admin)</el-button>
+        <Permission code="user:delete">
+          <el-button type="danger">管理员操作 (需权限: user:delete)</el-button>
         </Permission>
 
         <Permission code="super:delete">

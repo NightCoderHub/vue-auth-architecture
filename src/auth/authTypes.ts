@@ -8,7 +8,11 @@ export type AuthStatus =
 export interface UserInfo {
   id: number;
   username: string;
-  role: string;
+  roles: Array<{
+    id: number;
+    name: string;
+    description: string;
+  }>;
   avatar?: string;
 }
 
