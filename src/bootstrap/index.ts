@@ -1,6 +1,5 @@
 import { useAuthStore } from '../auth/authStore';
-import { ensureAuthReady } from '../auth/refresh';
-import { initPermissionChannel } from '../permission/permissionChannel';
+import { restoreSession } from '../auth/authService';
 
 /**
  * Application Bootstrap Logic
@@ -8,6 +7,7 @@ import { initPermissionChannel } from '../permission/permissionChannel';
  * Called before mounting the Vue app to ensure:
  * 1. Auth state is restored (from HttpOnly Cookie).
  * 2. Security channels are established.
+ * 3. User profile and permissions are fetched.
  */
 export async function bootstrap() {
   const authStore = useAuthStore();
@@ -17,17 +17,21 @@ export async function bootstrap() {
   
   try {
     console.log('[Bootstrap] Restoring session...');
-    // Attempt to refresh token immediately
-    const token = await ensureAuthReady();
     
-    if (token) {
-      console.log('[Bootstrap] Session restored.');
-      // Initialize Real-time Permission Channel
-      initPermissionChannel();
+    // Delegate to AuthService
+    const restored = await restoreSession();
+    
+    if (restored) {
+      console.log('[Bootstrap] Session fully restored.');
     } else {
       console.log('[Bootstrap] No active session.');
+      // Ensure we are in logged_out state (restoreSession handles logout on error, but ensureAuthReady handles simple no-token)
+      if (authStore.status !== 'logged_out') {
+          authStore.setLoggedOut();
+      }
     }
   } catch (error) {
     console.error('[Bootstrap] Failed:', error);
+    authStore.setLoggedOut();
   }
 }
