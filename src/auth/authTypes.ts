@@ -1,4 +1,4 @@
-export type AuthStatus = 
+export type AuthStatus =
   | 'idle'          // Initial state
   | 'bootstrapping' // Checking auth on app start
   | 'authenticated' // Logged in
@@ -6,7 +6,14 @@ export type AuthStatus =
   | 'logged_out';   // Explicitly logged out or refresh failed
 
 export interface UserInfo {
-  id: string;
-  name: string;
-  roles: string[];
+  id: number;
+  username: string;
+  role: string;
+  avatar?: string;
+}
+
+export interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
 }
