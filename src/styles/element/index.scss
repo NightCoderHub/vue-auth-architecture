@@ -1,0 +1,37 @@
+/* 只需要重写你需要的变量 */
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': #647eff,
+    ),
+    'success': (
+      'base': #42d392,
+    ),
+    'warning': (
+      'base': #e6a23c,
+    ),
+    'danger': (
+      'base': #f56c6c,
+    ),
+    'error': (
+      'base': #f56c6c,
+    ),
+    'info': (
+      'base': #909399,
+    ),
+  ),
+  $border-radius: (
+    'base': 4px,
+    'small': 2px,
+    'round': 20px,
+    'circle': 100%,
+  ),
+  $box-shadow: (
+    'base': (
+      0 2px 12px 0 rgba(0, 0, 0, 0.1),
+    ),
+  ),
+);
+
+// 全局样式覆盖
+

@@ -1,28 +1,45 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Login from '../views/Login.vue';
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
+import Layout from '@/layout/index.vue';
+import Login from '@/views/Login.vue';
 
-const routes = [
+// 常量路由：不需要权限即可访问
+export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    meta: { title: '登录', hidden: true }
   },
   {
     path: '/',
-    name: 'Dashboard',
-    component: () => import('../views/Dashboard.vue'), // 懒加载
-    meta: { requiresAuth: true }
+    name: 'Layout',
+    component: Layout,
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        name: 'Home',
+        component: () => import('../views/HomeView.vue'),
+        meta: { title: '首页', icon: 'house' }
+      }
+    ]
   },
   {
-      path: '/403',
-      name: 'Forbidden',
-      component: () => import('../views/Forbidden.vue')
+    path: '/403',
+    name: 'Forbidden',
+    component: () => import('../views/Forbidden.vue'),
+    meta: { hidden: true, title: '无权限' }
+  },
+  {
+    path: '/404',
+    component: () => import('../views/NotFound.vue'),
+    meta: { hidden: true, title: '页面未找到' }
   }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes: constantRoutes
 });
 
 export default router;

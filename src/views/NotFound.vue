@@ -1,21 +1,19 @@
 <template>
-  <div class="forbidden-container">
+  <div class="not-found-container">
     <div class="content">
       <div class="icon-wrapper">
-        <el-icon :size="100" class="lock-icon"><Lock /></el-icon>
+        <el-icon :size="100" class="warning-icon"><Warning /></el-icon>
       </div>
-      <h1 class="error-code">403</h1>
-      <h2 class="error-title">访问被拒绝</h2>
-      <p class="error-desc">抱歉，您没有权限访问此页面。</p>
+      <h1 class="error-code">404</h1>
+      <h2 class="error-title">页面未找到</h2>
+      <p class="error-desc">抱歉，您访问的页面不存在或已被移除。</p>
 
       <div class="actions">
-        <el-button type="primary" size="large" @click="$router.push('/')" >
-          <Icon icon="ep:home-filled" />
-          返回首页
+        <el-button type="primary" size="large" @click="$router.push('/')">
+           <Icon icon="ep:home-filled" /> 返回首页
         </el-button>
-        <el-button size="large" @click="$router.push('/login')">
-          <Icon icon="ep:user" />
-          重新登录
+        <el-button size="large" @click="$router.back()"  >
+          <Icon icon="ep:back" />  返回上一页
         </el-button>
       </div>
     </div>
@@ -23,11 +21,11 @@
 </template>
 
 <script setup lang="ts">
-import { Lock} from '@element-plus/icons-vue';
+import { Warning } from '@element-plus/icons-vue';
 </script>
 
 <style scoped>
-.forbidden-container {
+.not-found-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -65,7 +63,7 @@ import { Lock} from '@element-plus/icons-vue';
 .icon-wrapper {
   width: 120px;
   height: 120px;
-  background: #fef0f0;
+  background: #fdf6ec;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -73,8 +71,8 @@ import { Lock} from '@element-plus/icons-vue';
   margin: 0 auto 20px;
 }
 
-.lock-icon {
-  color: #f56c6c;
+.warning-icon {
+  color: #e6a23c;
 }
 
 .error-code {
@@ -83,7 +81,7 @@ import { Lock} from '@element-plus/icons-vue';
   color: #303133;
   margin: 0;
   line-height: 1;
-  background: linear-gradient(135deg, #f56c6c 0%, #ff9f43 100%);
+  background: linear-gradient(135deg, #e6a23c 0%, #f56c6c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

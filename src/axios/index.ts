@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import type { AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import type {  InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { useAuthStore } from '../auth/authStore';
 import { ensureAuthReady } from '../auth/refresh';
 import router from '../router';

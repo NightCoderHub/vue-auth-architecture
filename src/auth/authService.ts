@@ -1,7 +1,7 @@
 import apiClient from '../axios';
 import { useAuthStore } from './authStore';
 import { usePermissionStore } from '../permission/permissionStore';
-import { buildRoutes, resetRouter } from '../permission/routeBuilder';
+import { resetRouter, initDynamicRoutes } from '../permission/routeBuilder';
 import { initPermissionChannel } from '../permission/permissionChannel';
 import { ensureAuthReady } from './refresh';
 import router from '../router';
@@ -34,27 +34,23 @@ export async function login(username: string, password: string) {
     // 必须先设置 Token，否则后续的 API 请求无法通过拦截器的鉴权
     authStore.setAccessToken(accessToken);
 
-    console.log('[AuthService] Token 获取成功。正在并行获取用户资料、权限和菜单...');
+    console.log('[AuthService] Token 获取成功。正在并行获取用户资料和权限...');
 
-    // 3. 并行获取个人资料、权限、菜单
-    // 保持与 restoreSession 一致的并行请求逻辑
-    const [userRes, permRes, menuRes] = await Promise.all([
+    // 3. 并行获取个人资料、权限
+    const [userRes, permRes] = await Promise.all([
       apiClient.get<ApiResponse<UserInfo>>('/user/profile'),
-      apiClient.get<ApiResponse<string[]>>('/user/permissions'),
-      apiClient.get<ApiResponse<any[]>>('/user/menus')
+      apiClient.get<ApiResponse<string[]>>('/user/permissions')
     ]);
 
     const user = userRes.data.data;
     const permissions = permRes.data.data;
-    const menus = menuRes.data.data;
 
     // 4. 更新 Stores
     authStore.setUserInfo(user);
     permissionStore.setPermissions(permissions);
-    permissionStore.setMenus(menus);
 
-    // 5. 初始化动态路由
-    buildRoutes(permissions);
+    // 5. 初始化动态路由 (复用 routeBuilder 中的逻辑)
+    await initDynamicRoutes();
 
     // 6. 启动安全通道
     initPermissionChannel();
@@ -77,43 +73,58 @@ export async function login(username: string, password: string) {
  *
  * 尝试刷新 Token 并获取最新的用户信息/权限。
  */
-export async function restoreSession() {
+let restorePromise: Promise<boolean> | null = null;
+
+export function restoreSession(): Promise<boolean> {
   const authStore = useAuthStore();
   const permissionStore = usePermissionStore();
 
-  // 1. 尝试恢复 Token（通过 Refresh Token Cookie）
-  const token = await ensureAuthReady();
-  if (!token) return false;
-
-  try {
-    console.log('[AuthService] Token 已恢复。正在获取个人资料和权限...');
-
-    // 2. 并行获取个人资料、权限、菜单
-    // 我们假设如果刷新成功，后端即为可用状态。
-    const [userRes, permRes, menuRes] = await Promise.all([
-        apiClient.get<ApiResponse<UserInfo>>('/user/profile'),
-        apiClient.get<ApiResponse<string[]>>('/user/permissions'),
-        apiClient.get<ApiResponse<any[]>>('/user/menus')
-    ]);
-
-    // 3. 更新 Stores
-    // API 响应结构: { code: 200, data: ... }
-    // 注意：apiClient 返回 AxiosResponse，所以我们访问 .data 获取 body，然后访问 .data 获取 payload
-    authStore.setUserInfo(userRes.data.data);
-    permissionStore.setPermissions(permRes.data.data);
-    permissionStore.setMenus(menuRes.data.data);
-
-    // 4. 重建路由
-    buildRoutes(permRes.data.data);
-    initPermissionChannel();
-
-    return true;
-  } catch (error) {
-    console.warn('[AuthService] Restore session failed:', error);
-    // 如果我们有 Token 但无法获取个人资料，为了安全起见应退出登录
-    logout();
-    return false;
+  // 如果已有正在进行的恢复过程，直接返回该 Promise
+  if (restorePromise) {
+    console.log('[AuthService] 复用正在进行的会话恢复请求...');
+    return restorePromise;
   }
+
+  restorePromise = (async () => {
+    try {
+      // 1. 尝试恢复 Token（通过 Refresh Token Cookie）
+      const token = await ensureAuthReady();
+      if (!token) return false;
+
+      console.log('[AuthService] Token 已恢复。正在获取个人资料和权限...');
+
+      // 2. 并行获取个人资料、权限
+      const [userRes, permRes] = await Promise.all([
+        apiClient.get<ApiResponse<UserInfo>>('/user/profile'),
+        apiClient.get<ApiResponse<string[]>>('/user/permissions')
+      ]);
+
+      const user = userRes.data.data;
+      const permissions = permRes.data.data;
+
+      // 3. 更新 Stores
+      authStore.setUserInfo(user);
+      permissionStore.setPermissions(permissions);
+
+      // 4. 重建路由
+      // 注意：必须在这里等待路由初始化完成，确保后续逻辑（如 Guard）能看到完整的路由表
+      await initDynamicRoutes();
+
+      initPermissionChannel();
+
+      return true;
+    } catch (error) {
+      console.warn('[AuthService] Restore session failed:', error);
+      // 如果我们有 Token 但无法获取个人资料，为了安全起见应退出登录
+      logout();
+      return false;
+    } finally {
+      // 无论成功失败，重置 Promise 以便下次调用（虽然通常 restoreSession 只在初始化调用一次）
+      restorePromise = null;
+    }
+  })();
+
+  return restorePromise;
 }
 
 export function logout() {

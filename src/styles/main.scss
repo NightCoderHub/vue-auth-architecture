@@ -1,0 +1,165 @@
+@use "element-plus/theme-chalk/src/base.scss";
+
+/* Global Design System & Reset */
+:root {
+  /* Brand Colors - Mapping to Element Plus Variables for consistency */
+  --primary-color: var(--el-color-primary);
+  --primary-light: var(--el-color-primary-light-9);
+  --primary-dark: var(--el-color-primary-dark-2);
+  --success-color: var(--el-color-success);
+  --warning-color: var(--el-color-warning);
+  --danger-color: var(--el-color-danger);
+  --info-color: var(--el-color-info);
+
+  /* Text Colors */
+  --text-main: var(--el-text-color-primary);
+  --text-regular: var(--el-text-color-regular);
+  --text-secondary: var(--el-text-color-secondary);
+  --text-placeholder: var(--el-text-color-placeholder);
+
+  /* Backgrounds */
+  --bg-body: #F3F4F6; // Updated to requested grey
+  --bg-white: #ffffff;
+  --bg-sidebar: #111827; // Updated to requested Deep Grey-Blue
+
+  /* Borders & Shadows */
+  --border-color: #E5E7EB;
+  --border-radius-base: var(--el-border-radius-base);
+  --border-radius-medium: 8px;
+  --border-radius-large: 12px;
+  --box-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --box-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  /* Layout */
+  --header-height: 60px;
+  --sidebar-width: 210px;
+}
+
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Element Plus Overrides for Modern Feel */
+/* Note: Core variables are now handled in src/styles/element/index.scss */
+.el-button {
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.el-card {
+  border-radius: var(--border-radius-medium);
+  border: none;
+  box-shadow: var(--box-shadow-base) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.el-card:hover {
+  box-shadow: var(--box-shadow-hover) !important;
+  transform: none; // Removed translateY for rigorous feel
+}
+
+.el-button--large [class*=iconify] {
+  margin-right: 8px;
+}
+
+.el-button [class*=iconify] {
+  margin-right: 8px;
+}
+
+.el-button--small [class*=iconify] {
+  margin-right: 4px;
+}
+
+.el-menu-item .el-icon {
+  margin-right: 5px;
+  width: var(--el-menu-icon-width);
+  text-align: center;
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+/* Utility Classes */
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.mr-20 { margin-right: 20px; }
+.ml-20 { margin-left: 20px; }
+
+/* Transition Animations */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}

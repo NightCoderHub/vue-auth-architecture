@@ -4,7 +4,7 @@ import { usePermissionStore } from './permissionStore';
 import { resetRouter, buildRoutes } from './routeBuilder';
 import router from '../router';
 import apiClient from '../axios'; // 用于获取权限（作为后备或手动刷新）
-import type { ApiResponse } from '../auth/authTypes';
+import type { ApiResponse, MenuItem } from '../auth/authTypes';
 
 // WebSocket 实例
 let socket: WebSocket | null = null;
@@ -134,7 +134,7 @@ async function handleMessage(message: any) {
  * @param newPermissions 可选：新的权限列表。如果不传，则从 API 拉取。
  * @param newMenus 可选：新的菜单列表。
  */
-async function handlePermissionUpdate(newPermissions?: string[], newMenus?: any[]) {
+async function handlePermissionUpdate(newPermissions?: string[], newMenus?: MenuItem[]) {
   const permissionStore = usePermissionStore();
 
   // 1. 清除旧数据（故障安全）
@@ -150,7 +150,7 @@ async function handlePermissionUpdate(newPermissions?: string[], newMenus?: any[
       console.log('[PermissionChannel] 正在从 API 获取新权限...');
       const [permRes, menuRes] = await Promise.all([
         apiClient.get<ApiResponse<string[]>>('/user/permissions'),
-        apiClient.get<ApiResponse<any[]>>('/user/menus')
+        apiClient.get<ApiResponse<MenuItem[]>>('/user/menus')
       ]);
       permissions = permRes.data.data;
       menus = menuRes.data.data;
@@ -160,10 +160,9 @@ async function handlePermissionUpdate(newPermissions?: string[], newMenus?: any[
 
     // 2. 更新 Store
     if (permissions) permissionStore.setPermissions(permissions);
-    if (menus) permissionStore.setMenus(menus);
 
     // 3. 重建路由
-    if (permissions) buildRoutes(permissions);
+    if (menus) buildRoutes(menus);
 
     // 4. 安全检查：当前页面是否仍然允许访问？
     const currentPath = router.currentRoute.value.fullPath;

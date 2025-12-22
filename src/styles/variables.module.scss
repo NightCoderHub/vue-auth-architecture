@@ -1,0 +1,41 @@
+// Sidebar
+$menuText: #9ca3af; // Semi-transparent grey-white
+$menuActiveText: #ffffff; // Pure white
+$subMenuActiveText: #ffffff;
+
+$menuBg: #111827; // Deep Grey-Blue
+$menuHover: rgba(255, 255, 255, 0.05); // Weak white transparent
+
+$subMenuBg: #1f2d3d; // Slightly lighter for submenu? Or keep same? User said "Deep Grey-Blue" for background. Let's keep submenu similar or slightly distinct if needed, but for now matching the requested dark theme.
+$subMenuHover: rgba(255, 255, 255, 0.05);
+
+$sideBarWidth: 210px;
+$sideBarWidthCollapsed: 64px;
+
+// Navbar
+$navbarHeight: 60px; // Fixed 60px
+
+// TagsView
+$tagsViewHeight: 34px;
+
+// Colors
+$blue: #324157;
+$light-blue: #3A71A8;
+$red: #C03639;
+$pink: #E65D6E;
+$green: #30B08F;
+$tiffany: #4AB7BD;
+$yellow: #FEC171;
+$panGreen: #30B08F;
+
+// Export for JS
+:export {
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  subMenuActiveText: $subMenuActiveText;
+  menuBg: $menuBg;
+  menuHover: $menuHover;
+  subMenuBg: $subMenuBg;
+  subMenuHover: $subMenuHover;
+  sideBarWidth: $sideBarWidth;
+}
