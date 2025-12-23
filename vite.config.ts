@@ -55,12 +55,17 @@ export default defineConfig({
     },
   },
   build: {
+    chunkSizeWarningLimit: 1000, // 提高警告阈值到 1MB
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // 如果想专门把 iconify 拆出来
-            if (id.includes('@iconify-json')) {
+            // 独立打包 Element Plus
+            if (id.includes('element-plus')) {
+              return 'element-plus';
+            }
+            // 独立打包 Icons
+            if (id.includes('@iconify-json') || id.includes('@iconify')) {
               return 'icons';
             }
             // 其他依赖打入 vendor
