@@ -16,7 +16,7 @@ declare module 'vue-router' {
 
     /**
      * 【可选/权限】是否需要登录授权
-     * @default true (建议生产环境默认为 true，更安全)
+     * @default true
      */
     requiresAuth?: boolean;
 
@@ -54,22 +54,16 @@ declare module 'vue-router' {
     affix?: boolean;
 
     /**
-     * 【可选/面包屑】是否在面包屑导航中隐藏
-     * @default true
-     */
-    breadcrumb?: boolean;
-
-    /**
      * 【可选/菜单】高亮菜单项的路径
      * 场景：访问详情页时，希望侧边栏高亮的是列表页的菜单
-     * 示例：'/user/list'
+     * 示例：'/user/edit'
      */
     activeMenu?: string;
 
     /**
      * 【可选/菜单】是否总是显示根菜单
      * 如果子路由只有一个，默认会提升显示。设为 true 则强制保持层级显示。
-     * @default false
+     * @default true
      */
     alwaysShow?: boolean;
 
@@ -93,12 +87,6 @@ declare module 'vue-router' {
     fullScreen?: boolean;
 
     /**
-     * 【可选/多页签】页签显示最大数量限制
-     * 针对特定路由是否限制其打开的副本数量
-     */
-    maxNum?: number;
-
-    /**
      * 【可选/菜单】排序权重
      * 数字越小排序越靠前
      * @default 0
@@ -111,6 +99,12 @@ declare module 'vue-router' {
      * @default true
      */
     enabled?: boolean;
+
+    /**
+     * 【可选/路由】路由重定向
+     * 当用户访问该路由时，重定向到指定的路由路径
+     */
+    redirect?: string;
 
     /**
      * 【可选/数据】父级ID

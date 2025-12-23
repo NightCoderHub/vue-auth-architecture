@@ -73,11 +73,37 @@ export interface MenuItem {
   icon?: string;
 
   /**
+   * 【可选/权限】是否需要登录授权
+   * @default true (建议生产环境默认为 true，更安全)
+   */
+  requiresAuth?: boolean;
+
+  /**
+   * 【可选/布局】是否隐藏面包屑
+   * @default false
+   */
+  hideBreadcrumb?: boolean;
+
+  /**
+   * 【可选/状态】是否启用
+   * 如果为 false，则不显示在菜单中且不可访问（由路由守卫拦截）
+   * @default true
+   */
+  enabled?: boolean;
+
+  /**
    * 是否隐藏
    * true: 不在侧边栏显示 (如详情页、404 页)
    * @default false
    */
   hidden?: boolean;
+
+  /**
+   * 【可选/菜单】高亮菜单项的路径
+   * 场景：访问详情页时，希望侧边栏高亮的是列表页的菜单
+   * 示例：'/user/list'
+   */
+  activeMenu?: string;
 
   /**
    * 是否开启缓存
@@ -113,20 +139,16 @@ export interface MenuItem {
   affix?: boolean;
 
   /**
-   * 是否在面包屑中隐藏
-   * @default false
-   */
-  breadcrumb?: boolean;
-
-  /**
    * 是否全屏显示
    * (隐藏侧边栏和顶栏)
+   * @default false
    */
   fullScreen?: boolean;
 
   /**
    * 总是显示根菜单
    * 当只有一个子菜单时，是否强制显示父级
+   * @default true
    */
   alwaysShow?: boolean;
 

@@ -1,14 +1,22 @@
 <template>
   <template v-if="!isHidden">
-    <!-- 叶子节点（无子节点或单个子节点视为根节点） -->
+    <!--
+      叶子节点渲染
+      当路由没有子节点，或者只有一个子节点且 alwaysShow 为 false 时渲染。
+    -->
     <template v-if="showAsLeaf">
-      <app-link v-if="leafRoute.meta" :to="resolvePath(leafRoute.path)">
+      <app-link v-if="leafRoute.meta" :to="resolvePath(leafRoute.path, leafRoute.meta.externalLink)">
         <el-menu-item
           :index="resolvePath(leafRoute.path)"
           :class="{ 'submenu-title-noDropdown': !isNest }"
           v-bind="$attrs"
         >
-          <Icon v-if="leafRoute.meta.icon" :icon="'ep:' + leafRoute.meta.icon" class="el-icon" />
+          <!-- 图标处理：支持 Element Plus 图标的 'ep:' 前缀 -->
+          <Icon
+            v-if="leafRoute.meta.icon"
+            :icon="leafRoute.meta.icon.startsWith('ep:') ? leafRoute.meta.icon : 'ep:' + leafRoute.meta.icon"
+            class="el-icon"
+          />
           <template #title>
             <span>{{ leafRoute.meta.title }}</span>
           </template>
@@ -16,10 +24,17 @@
       </app-link>
     </template>
 
-    <!-- 子菜单节点 -->
+    <!--
+      子菜单节点渲染
+      当路由有多个子节点，或者 alwaysShow 为 true 时渲染。
+    -->
     <el-sub-menu v-else :index="resolvePath(item.path)" teleported v-bind="$attrs">
       <template #title>
-        <Icon v-if="item.meta && item.meta.icon" :icon="'ep:' + item.meta.icon" class="el-icon" />
+        <Icon
+          v-if="item.meta && item.meta.icon"
+          :icon="item.meta.icon.startsWith('ep:') ? item.meta.icon : 'ep:' + item.meta.icon"
+          class="el-icon"
+        />
         <span v-if="item.meta">{{ item.meta.title }}</span>
       </template>
 
@@ -36,67 +51,103 @@
 </template>
 
 <script setup lang="ts">
-
 import { computed } from 'vue';
 import type { PropType } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 import AppLink from './Link.vue';
 
+
 defineOptions({
   inheritAttrs: false,
 });
 
-// 定义具有严格类型的 Props
+/**
+ * Props 定义
+ */
 const props = defineProps({
+  // 要渲染的路由对象
   item: {
     type: Object as PropType<RouteRecordRaw>,
     required: true,
   },
+  // 该项是否嵌套在另一个子菜单中
   isNest: {
     type: Boolean,
     default: false,
   },
+  // 用于解析相对路径的基础路径
   basePath: {
     type: String,
     default: '',
   },
 });
 
-// 用于叶子路由计算的辅助类型
+// 叶子路由计算的辅助类型
 type DisplayRoute = RouteRecordRaw & { noShowingChildren?: boolean };
 
-// 检查当前路由是否隐藏或禁用
+/**
+ * 确定菜单项是否应该隐藏。
+ * 检查 meta 中的 'hidden' (默认为 false) 和 'enabled' (默认为 true) 属性。
+ */
 const isHidden = computed(() => {
-  return props.item.meta?.hidden === true || props.item.meta?.enabled === false;
+  const meta = props.item.meta;
+  if (!meta) return false;
+
+  // hidden: true 表示隐藏
+  if (meta.hidden === true) return true;
+
+  // enabled: false 表示禁用/隐藏
+  if (meta.enabled === false) return true;
+
+  return false;
 });
 
-// 过滤应该显示的子节点
+/**
+ * 过滤应该显示的子项。
+ * 检查每个子项的 'hidden' 和 'enabled'。
+ */
 const showingChildren = computed(() => {
   const children = props.item.children || [];
   return children.filter((item) => {
-    return !item.meta?.hidden && item.meta?.enabled !== false;
+    const meta = item.meta;
+    if (!meta) return true; // 如果没有 meta，默认可见
+    if (meta.hidden === true) return false;
+    if (meta.enabled === false) return false;
+    return true;
   });
 });
 
-// 根据 orderNo 对子节点进行排序
+/**
+ * 根据 'orderNo' 对子项进行排序。
+ * 默认 orderNo 为 0。
+ */
 const sortedChildren = computed(() => {
   return [...showingChildren.value].sort((a, b) => {
     return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
   });
 });
 
-// 确定是否应将此项显示为叶子节点（无下拉菜单）的逻辑
-// 返回要显示为叶子节点的路由对象
+/**
+ * 确定该项是否应渲染为叶子节点（无子菜单）的逻辑。
+ * 严格遵循 'alwaysShow' 逻辑。
+ */
 const leafRouteResult = computed<{ isLeaf: boolean; route: DisplayRoute | null }>(() => {
-  const alwaysShow = props.item.meta?.alwaysShow;
+  // 根据 router.d.ts 定义，默认 alwaysShow 为 true
+  // 然而，通常的标准行为暗示如果未指定，则为 false 以进行扁平化。
+  // 如果提供了显式值，我们将遵循该值，否则仅在严格请求时默认为 true。
+  // 但是，根据常见用法，alwaysShow=true 意味着“保持为子菜单”。
+  // 如果未定义，通常允许扁平化。
+  // router.d.ts 说 @default true。
+  // 让我们使用 ?? true 来严格遵守用户提供的类型定义。
+  const alwaysShow = props.item.meta?.alwaysShow ?? true;
+
   const childrenCount = showingChildren.value.length;
 
-  // 如果 alwaysShow 为 true，则永远不显示为叶子节点（始终作为子菜单）
-  if (alwaysShow) {
-    return { isLeaf: false, route: null };
-  }
+  // 如果 alwaysShow 为 true，我们从不扁平化（除非 0 个子项，如下处理）
+  // 如果 0 个子项，它必须是叶子节点。
 
-  // 情况 1：没有显示的子节点 -> 将父节点显示为叶子节点
+  // 情况 1: 没有可显示的子项 -> 渲染为叶子节点（实际上不管 alwaysShow 如何）
+  // 除非它是目录类型？但在这里我们只渲染为叶子链接。
   if (childrenCount === 0) {
     return {
       isLeaf: true,
@@ -104,24 +155,29 @@ const leafRouteResult = computed<{ isLeaf: boolean; route: DisplayRoute | null }
     };
   }
 
-  // 情况 2：有一个显示的子节点 -> 将该子节点显示为叶子节点（扁平化）
+  // 如果 alwaysShow 为 true，且有子项，则渲染为子菜单。
+  if (alwaysShow) {
+    return { isLeaf: false, route: null };
+  }
+
+  // 情况 2: 有一个可显示的子项 -> 扁平化为叶子节点（如果 alwaysShow 为 false）
   if (childrenCount === 1) {
     const child = showingChildren.value[0];
     if (!child) {
       return { isLeaf: false, route: null };
     }
 
-    // 检查子节点是否有自己的显示子节点
+    // 检查子项是否有其自己的可显示子项
     const grandChildren = child.children || [];
     const showingGrandChildren = grandChildren.filter((item) => {
-      return !item.meta?.hidden && item.meta?.enabled !== false;
+      const meta = item.meta;
+      if (!meta) return true;
+      return !meta.hidden && meta.enabled !== false;
     });
 
-    // 如果子节点有显示的子节点或设置为始终显示，
-    // 我们不能将其扁平化为叶子节点，因为这会隐藏其子节点。
-    // 相反，我们将当前项视为子菜单 (isLeaf: false)。
-    if (showingGrandChildren.length > 0 || child.meta?.alwaysShow) {
-      return { isLeaf: false, route: null };
+    // 如果子项有子项，则不扁平化
+    if (showingGrandChildren.length > 0) {
+       return { isLeaf: false, route: null };
     }
 
     return {
@@ -130,33 +186,44 @@ const leafRouteResult = computed<{ isLeaf: boolean; route: DisplayRoute | null }
     };
   }
 
-  // 情况 3：多个子节点 -> 显示为子菜单
+  // 情况 3: 多个子项 -> 渲染为子菜单
   return { isLeaf: false, route: null };
 });
 
 const showAsLeaf = computed(() => leafRouteResult.value.isLeaf);
 const leafRoute = computed(() => leafRouteResult.value.route as DisplayRoute);
 
-// 路径解析逻辑
-const resolvePath = (routePath: string) => {
-  if (isExternal(routePath)) {
+/**
+ * 解析菜单项的路径。
+ * 如果存在，优先使用 meta 中的 'externalLink'。
+ */
+const resolvePath = (routePath: string, externalLink?: string) => {
+  // 如果提供了 meta.externalLink，直接使用它
+  if (externalLink) {
+    return externalLink;
+  }
+
+  if (isExternalUrl(routePath)) {
     return routePath;
   }
-  if (isExternal(props.basePath)) {
+  if (isExternalUrl(props.basePath)) {
     return props.basePath;
   }
 
-  // 合并路径
-  // 确保没有双斜杠
+  // 如果路径是绝对路径，直接返回
+  if (routePath.startsWith('/')) {
+    return routePath;
+  }
+
+  // 解析相对路径
   const basePath = props.basePath.endsWith('/') ? props.basePath : props.basePath + '/';
-  const path = routePath.startsWith('/') ? routePath.slice(1) : routePath;
-  const cleanPath = (basePath + path).replace(/\/+/g, '/');
+  const cleanPath = (basePath + routePath).replace(/\/+/g, '/');
 
   return cleanPath;
 };
 
-// 检查外部链接的工具函数
-const isExternal = (path: string) => {
+// 内联 isExternal 工具函数
+const isExternalUrl = (path: string) => {
   return /^(https?:|mailto:|tel:)/.test(path);
 };
 </script>
@@ -166,40 +233,8 @@ const isExternal = (path: string) => {
 
 :deep(.el-menu-item),
 :deep(.el-sub-menu__title) {
-  // font-size: 14px;
-  // letter-spacing: 0.5px; // 增加间距
-
-  // 图标
-  // .el-icon {
-  //   width: 18px;
-  //   height: 18px;
-  //   font-size: 18px;
-  //   color: #9ca3af;
-  // }
-
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05) !important; // 使用明确的悬停颜色或变量
+    background-color: rgba(255, 255, 255, 0.05) !important;
   }
 }
-
-// :deep(.el-menu-item) {
-//   &.is-active {
-//     background-color: rgba(255, 255, 255, 0.05) !important;
-//     color: $menuActiveText !important;
-//
-//     &::before {
-//       content: '';
-//       position: absolute;
-//       left: 0;
-//       top: 0;
-//       bottom: 0;
-//       width: 3px;
-//       background: var(--el-color-primary);
-//     }
-//
-//     .el-icon {
-//       color: #ffffff;
-//     }
-//   }
-// }
 </style>

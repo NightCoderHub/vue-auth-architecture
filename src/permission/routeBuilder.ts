@@ -1,19 +1,14 @@
 import router from '../router';
-import { type RouteRecordRaw, RouterView } from 'vue-router';
-import { h } from 'vue';
+import { type RouteRecordRaw } from 'vue-router';
+
 import { usePermissionStore } from './permissionStore';
 import type { MenuItem, ApiResponse } from '../auth/authTypes';
 import Layout from '@/layout/index.vue';
 import apiClient from '../axios';
-
 // 追踪动态添加的路由以便清理
 let addedRouteNames: string[] = [];
 
-// 简单的 RouterView 包装器，用于在 Layout 内部渲染嵌套路由
-const ParentView = {
-  name: 'ParentView',
-  render: () => h(RouterView)
-};
+
 
 /**
  * 重置 Router
@@ -56,31 +51,21 @@ export async function initDynamicRoutes() {
  */
 export function buildRoutes(menus: MenuItem[] = []) {
   const permissionStore = usePermissionStore();
-
   // 1. 根据权限生成动态路由
   // 采用后端驱动方案 (Scheme B):
   // 后端直接返回路由配置 (menus)，前端递归处理成 Vue Router 格式
   // 这种方式灵活性最高，无需在前端维护庞大的路由映射表
   const dynamicRoutes: RouteRecordRaw[] = generateRoutesFromMenu(menus);
-
   // 2. 注册路由
-  dynamicRoutes.forEach(route => {
-    // 如果是顶级菜单（parentId 为 0 或 null）且没有子路由，添加到 Layout 路由下
-    // 注意：需要确保 generateRoutesFromMenu 中正确处理了 component (将 Layout 替换为 ParentView)
-    const isRoot = route.meta?.parentId === 0 || route.meta?.parentId === null;
-    const hasChildren = route.children && route.children.length > 0;
-
-    if (isRoot && !hasChildren) {
-      router.addRoute('Layout', route);
-    } else {
-      router.addRoute(route);
-    }
+  // 过滤掉外链路由，避免 vue-router 报错
+  const routerRoutes = filterExternalRoutes(dynamicRoutes);
+  routerRoutes.forEach(route => {
+    router.addRoute(route);
 
     if (route.name) {
       addedRouteNames.push(route.name as string);
     }
   });
-
   // 3. 动态添加 404 路由（捕获所有未匹配路径）
   // 必须最后添加，以确保不会覆盖合法的动态路由
   try {
@@ -112,9 +97,6 @@ function generateRoutesFromMenu(menus: MenuItem[]): RouteRecordRaw[] {
   const routes: RouteRecordRaw[] = [];
 
   for (const item of menus) {
-    const isRoot = item.parentId === 0 || item.parentId === null;
-    const hasChildren = item.children && item.children.length > 0;
-
     // 基础路由结构
     // 使用 as any 规避 RouteRecordRaw 的联合类型推断问题
     // 因为 RouteRecordRaw 是 RouteRecordSingleView | RouteRecordMultipleViews | RouteRecordRedirect 的联合类型
@@ -124,9 +106,8 @@ function generateRoutesFromMenu(menus: MenuItem[]): RouteRecordRaw[] {
       name: item.name,
       // 如果是顶级菜单且没有 component，通常使用 Layout
       // 如果是子菜单，根据 component 字段动态加载组件
-      // 如果添加到 Layout 下，顶级 Layout 组件应替换为 ParentView 以避免双重 Sidebar
-      component: item.component === 'Layout'
-        ? (isRoot && !hasChildren ? ParentView : Layout)
+      component: !item.component || item.component.trim() === 'Layout'
+        ? Layout
         : loadView(item.component),
       meta: {
         title: item.title,
@@ -135,14 +116,14 @@ function generateRoutesFromMenu(menus: MenuItem[]): RouteRecordRaw[] {
         keepAlive: item.keepAlive ?? false,
         permissions: item.permissions,
         affix: item.affix ?? false,
-        breadcrumb: item.breadcrumb ?? true,
-        alwaysShow: item.alwaysShow ?? false,
+        alwaysShow: item.alwaysShow ?? true,
         externalLink: item.externalLink,
+        activeMenu: item.activeMenu,
         fullScreen: item.fullScreen ?? false,
         orderNo: item.sort ?? 0,
-        enabled: true,
-        requiresAuth: true,
-        hideBreadcrumb: false,
+        enabled: item.enabled ?? true,
+        requiresAuth: item.requiresAuth ?? true,
+        hideBreadcrumb: item.hideBreadcrumb ?? false,
         parentId: item.parentId
       }
     };
@@ -168,6 +149,38 @@ function generateRoutesFromMenu(menus: MenuItem[]): RouteRecordRaw[] {
  */
 const modules = import.meta.glob('../views/**/*.vue');
 
+/**
+ * 判断是否为外部链接
+ */
+function isExternal(path: string) {
+  return /^(https?:|mailto:|tel:)/.test(path);
+}
+
+/**
+ * 递归过滤掉外部链接路由
+ * 用于 vue-router 注册（Router 不支持 http:// 开头的 path）
+ * 同时保留原始路由结构用于侧边栏渲染
+ */
+function filterExternalRoutes(routes: RouteRecordRaw[]): RouteRecordRaw[] {
+  const res: RouteRecordRaw[] = [];
+
+  routes.forEach(route => {
+    // 如果 path 是外链，则不注册到 router
+    if (isExternal(route.path)) {
+      return;
+    }
+
+    // 浅拷贝路由对象，避免修改原始 menus 数据（影响侧边栏）
+    const tmp = { ...route };
+    if (tmp.children) {
+      tmp.children = filterExternalRoutes(tmp.children);
+    }
+    res.push(tmp);
+  });
+
+  return res;
+}
+
 function loadView(viewPath: string) {
   // 处理特殊情况
   if (!viewPath) return undefined;
@@ -178,7 +191,7 @@ function loadView(viewPath: string) {
   // 这里为了演示方便，如果找不到组件，统一 fallback 到 HomeView
   // 真实项目中应该报错或跳转 404
   const path = `../views/${viewPath}.vue`;
-
+  console.log('[RouteBuilder] Loading component:', path);
   if (modules[path]) {
     return modules[path];
   } else {

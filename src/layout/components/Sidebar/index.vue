@@ -39,16 +39,39 @@ const permissionStore = usePermissionStore();
 
 const showLogo = computed(() => true); // Can be controlled by settings
 const isCollapse = computed(() => !appStore.sidebar.opened);
+
+/**
+ * Filter and sort routes for the sidebar.
+ *
+ * Rules:
+ * 1. Filter out hidden or disabled routes.
+ * 2. Sort by 'orderNo' (ascending).
+ */
 const permission_routes = computed(() => {
   const menus = permissionStore.menus;
-  // Deep clone or just sort top level?
-  // Sorting top level is a good start.
-  // Since SidebarItem also sorts its children (we will implement this), we just need to sort the root here.
-  return [...menus].sort((a, b) => {
+
+  // Filter hidden or disabled routes
+  const filteredMenus = menus.filter(route => {
+    const meta = route.meta;
+    if (!meta) return true; // Default visible
+    if (meta.hidden === true) return false;
+    if (meta.enabled === false) return false;
+    return true;
+  });
+
+  // Sort by orderNo
+  return filteredMenus.sort((a, b) => {
     return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
   });
 });
 
+/**
+ * Determine the active menu index.
+ *
+ * Priority:
+ * 1. meta.activeMenu (if configured, e.g., for hidden detail pages)
+ * 2. route.path (default)
+ */
 const activeMenu = computed(() => {
   const { meta, path } = route;
   if (meta.activeMenu) {

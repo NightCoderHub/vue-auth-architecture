@@ -15,12 +15,13 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: 'Layout',
     component: Layout,
     redirect: '/home',
+    meta: { title: '首页', icon: 'house', alwaysShow: false },
     children: [
       {
         path: 'home',
         name: 'Home',
         component: () => import('../views/HomeView.vue'),
-        meta: { title: '首页', icon: 'house' }
+        meta: { title: '首页', icon: 'house', }
       }
     ]
   },
@@ -39,7 +40,8 @@ export const constantRoutes: RouteRecordRaw[] = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: constantRoutes
+  routes: constantRoutes,
+  strict: true, // 全局配置：严格匹配尾部斜杠
 });
 
 export default router;
