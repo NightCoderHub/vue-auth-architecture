@@ -25,3 +25,6 @@ dist-ssr
 
 # Trae directory
 .trae/
+
+# Ignore all test directories
+__tests__/
