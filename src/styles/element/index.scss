@@ -1,52 +1,56 @@
-/* Element Plus Theme Overrides */
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      'base': #4080FF,
+      'base': #0052D9,
     ),
     'success': (
-      'base': #52C41A,
+      'base': #00A870,
     ),
     'warning': (
-      'base': #FAAD14,
+      'base': #ED7B2F,
     ),
     'danger': (
-      'base': #FF4D4F,
+      'base': #E34D59,
     ),
     'info': (
-      'base': #909399,
+      'base': #888888,
     ),
   ),
+  $text-color: (
+    'primary': #1F2329,
+    'regular': #4E5969,
+    'secondary': #86909C,
+    'placeholder': #C9CDD4,
+  ),
+  $border-color: (
+    'base': #E5E6EB,
+    'light': #F2F3F5,
+    'lighter': #F7F8FA,
+    'extra-light': #FFFFFF,
+  ),
+  $fill-color: (
+    'base': #F0F2F5,
+    'light': #F7F8FA,
+    'lighter': #FAFBFC,
+    'extra-light': #FFFFFF,
+  ),
+  $font-size: (
+    'base': 14px,
+  ),
   $border-radius: (
-    'base': 6px,
-    'small': 4px,
+    'base': 4px,
+    'small': 2px,
     'round': 20px,
     'circle': 100%,
   ),
   $box-shadow: (
     'base': (
-      0 2px 12px 0 rgba(0, 0, 0, 0.05), // Softer shadow
+      0 1px 10px 0 rgba(0, 0, 0, 0.05),
+      0 4px 5px 0 rgba(0, 0, 0, 0.03),
+      0 2px 4px -1px rgba(0, 0, 0, 0.04),
     ),
     'light': (
-      0 2px 12px 0 rgba(0, 0, 0, 0.03),
+      0 4px 12px 0 rgba(0, 0, 0, 0.04),
     ),
   ),
 );
-
-// Global overrides
-:root {
-  --el-border-radius-base: 6px;
-
-  // Custom Design Tokens
-  --app-main-bg: #f0f2f5;
-  --app-card-bg: #ffffff;
-  --app-card-radius: 8px;
-  --app-card-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
-}
-
-
-.el-card {
-  border: none;
-  border-radius: var(--app-card-radius);
-  // box-shadow: var(--app-card-shadow) !important; // Optional: Element Plus card has its own shadow, we can refine it
-}

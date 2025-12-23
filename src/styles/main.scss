@@ -1,169 +1,257 @@
 @use "element-plus/theme-chalk/src/base.scss";
 
-/* Global Design System & Reset */
+/*
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * Design Tokens (System Visual Layer)
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ */
 :root {
-  /* Brand Colors - Mapping to Element Plus Variables for consistency */
-  --primary-color: var(--el-color-primary);
-  --primary-light: var(--el-color-primary-light-9);
-  --primary-dark: var(--el-color-primary-dark-2);
-  --success-color: var(--el-color-success);
-  --warning-color: var(--el-color-warning);
-  --danger-color: var(--el-color-danger);
-  --info-color: var(--el-color-info);
+  /* 1. Color System - Neutrals (Hierarchy) */
+  --color-text-primary: #1F2329;   /* Main Content */
+  --color-text-regular: #4E5969;   /* Secondary Content */
+  --color-text-secondary: #86909C; /* Auxiliary/Meta info */
+  --color-text-placeholder: #C9CDD4;
+  --color-text-disabled: #C9CDD4;
 
-  /* Text Colors */
-  --text-main: var(--el-text-color-primary);
-  --text-regular: var(--el-text-color-regular);
-  --text-secondary: var(--el-text-color-secondary);
-  --text-placeholder: var(--el-text-color-placeholder);
+  --color-border: #E5E6EB;         /* Standard Border */
+  --color-border-light: #F2F3F5;   /* Divider */
 
-  /* Backgrounds */
-  --bg-body: #F3F4F6; // Updated to requested grey
-  --bg-white: #ffffff;
-  --bg-sidebar: #111827; // Updated to requested Deep Grey-Blue
+  --color-bg-layout: #F2F3F5;      /* Page Background */
+  --color-bg-container: #FFFFFF;   /* Container Background */
+  --color-bg-elevated: #FFFFFF;    /* Popovers/Modals */
+  --color-bg-spotlight: rgba(0, 0, 0, 0.04); /* Hover/Active states */
 
-  /* Borders & Shadows */
-  --border-color: #E5E7EB;
-  --border-radius-base: var(--el-border-radius-base);
+  /* 2. Color System - Functional (Semantic Only) */
+  /* Mapping from Element Plus vars for consistency */
+  --color-primary: var(--el-color-primary);
+  --color-success: var(--el-color-success);
+  --color-warning: var(--el-color-warning);
+  --color-danger: var(--el-color-danger);
+  --color-info: var(--el-color-info);
+
+  /* 3. Typography System */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --font-size-h1: 20px;
+  --font-size-h2: 18px;
+  --font-size-h3: 16px;
+  --font-size-body: 14px;
+  --font-size-small: 12px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  --line-height-base: 1.5715;
+  --line-height-heading: 1.4;
+
+  /* 4. Spacing System (Rhythm) */
+  --spacing-xs: 4px;
+  --spacing-s: 8px;
+  --spacing-m: 16px;
+  --spacing-l: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* 5. Shape & Depth */
+  --border-radius-base: var(--el-border-radius-base); /* 4px */
   --border-radius-medium: 8px;
   --border-radius-large: 12px;
-  --box-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --box-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
-  /* Layout */
+  /* Restrained Shadows */
+  --shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  --shadow-2: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --shadow-3: 0 6px 16px -8px rgba(0, 0, 0, 0.08), 0 9px 28px 0 rgba(0, 0, 0, 0.05), 0 12px 48px 16px rgba(0, 0, 0, 0.03);
 }
 
-/* Reset & Base Styles */
+/*
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * Global Reset & Base Styles
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ */
 html {
   box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
 }
 
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: inherit;
 }
 
-a {
-  text-decoration: none;
-}
-
-html, body {
+html,body {
   margin: 0;
   padding: 0;
-  height: 100%;
   width: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  height: 100%;
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-layout);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-body);
-  color: var(--text-main);
-  line-height: 1.6;
 }
 
 #app {
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
 
-/* Scrollbar Customization */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+/* Scrollbar Customization - Subtle & Integrated */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
-  border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: rgba(0, 0, 0, 0.25);
 }
 
-/* Element Plus Overrides for Modern Feel */
-/* Note: Core variables are now handled in src/styles/element/index.scss */
-.el-button {
-  font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/*
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * Component Visual Refinements (Systematic Overrides)
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ */
 
+/* 1. Card - Boundary Definition */
 .el-card {
-  border-radius: var(--border-radius-medium);
-  border: none;
-  box-shadow: var(--box-shadow-base) !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --el-card-border-color: transparent; /* Remove border */
+  --el-card-bg-color: var(--color-bg-container);
+
+  border: none !important;
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--shadow-1) !important;
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Header separation */
+  .el-card__header {
+    padding: var(--spacing-m) var(--spacing-l);
+    border-bottom: 1px solid var(--color-border-light);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-h3);
+    color: var(--color-text-primary);
+  }
+
+  .el-card__body {
+    padding: var(--spacing-l);
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-2) !important;
+  }
 }
 
-.el-card:hover {
-  box-shadow: var(--box-shadow-hover) !important;
-  transform: none; // Removed translateY for rigorous feel
+/* 2. Table - Data Density & Readability */
+.el-table {
+  --el-table-header-bg-color: #F7F8FA; /* Distinct header bg */
+  --el-table-header-text-color: var(--color-text-primary);
+  --el-table-text-color: var(--color-text-regular);
+  --el-table-row-hover-bg-color: var(--color-bg-spotlight);
+  --el-table-border-color: var(--color-border-light);
+
+  font-size: var(--font-size-body);
+
+  /* Header Styling */
+  th.el-table__cell {
+    background-color: var(--el-table-header-bg-color) !important;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    height: 48px; /* Fixed height for stability */
+    padding: 8px 0;
+  }
+
+  /* Cell Styling */
+  td.el-table__cell {
+    padding: 12px 0; /* Moderate padding */
+  }
 }
 
-.el-button--large [class*=iconify] {
-  margin-right: 8px;
+/* 3. Button - Hierarchy & Restraint */
+.el-button {
+  font-weight: var(--font-weight-regular);
+  border-radius: var(--border-radius-base);
+  box-shadow: none !important; /* Remove default Element Plus shadow for flat look */
+
+  &--primary {
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Danger button restraint */
+  &--danger.is-plain {
+    background: #FFF1F0;
+    border-color: #FFA39E;
+    color: var(--color-danger);
+
+    &:hover {
+      background: var(--color-danger);
+      border-color: var(--color-danger);
+      color: #fff;
+    }
+  }
 }
 
-.el-button [class*=iconify] {
-  margin-right: 8px;
+/* 4. Form - Alignment & Clarity */
+.el-form-item__label {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-regular);
 }
 
-.el-button--small [class*=iconify] {
-  margin-right: 4px;
+.el-input__wrapper, .el-select__wrapper {
+  box-shadow: 0 0 0 1px var(--color-border) inset !important;
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--color-primary) inset !important;
+  }
+
+  &.is-focus {
+    box-shadow: 0 0 0 1px var(--color-primary) inset !important;
+    // ring could be added here if needed
+  }
 }
 
 .el-menu-item .el-icon {
-  margin-right: 5px;
   width: var(--el-menu-icon-width);
   text-align: center;
-  font-size: 18px;
   vertical-align: middle;
+  margin-right: 5px;
+  font-size: 18px;
 }
+
+/* Typography Helpers */
+.text-h1 { font-size: var(--font-size-h1); font-weight: var(--font-weight-bold); color: var(--color-text-primary); }
+.text-h2 { font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); color: var(--color-text-primary); }
+.text-h3 { font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
 
 /* Utility Classes */
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+.mt-20 { margin-top: var(--spacing-l); }
+.mb-20 { margin-bottom: var(--spacing-l); }
+.mr-20 { margin-right: var(--spacing-l); }
+.ml-20 { margin-left: var(--spacing-l); }
+.p-20 { padding: var(--spacing-l); }
 
-.text-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mt-20 { margin-top: 20px; }
-.mb-20 { margin-bottom: 20px; }
-.mr-20 { margin-right: 20px; }
-.ml-20 { margin-left: 20px; }
-
-/* Transition Animations */
+/* Animation */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.2s ease;
 }
-
 .fade-enter-from,
 .fade-leave-to {
-  opacity: 0;
-}
-
-.slide-fade-enter-active {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-fade-leave-active {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateX(20px);
   opacity: 0;
 }

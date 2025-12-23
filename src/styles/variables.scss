@@ -1,33 +1,33 @@
 // Sidebar
-$menuText: #303133; // Dark Gray for text
-$menuActiveText: #4080FF; // Primary Blue for active text
-$subMenuActiveText: #4080FF;
+$menuText: #4E5969; // Regular Text
+$menuActiveText: #0052D9; // Primary Blue
+$subMenuActiveText: #0052D9;
 
-$menuBg: #ffffff; // White background
-$menuHover: #f0f7ff; // Very light blue hover
-$menuActiveBg: #e6f7ff; // Light blue active background
+$menuBg: #FFFFFF;
+$menuHover: rgba(0, 0, 0, 0.04); // Subtle hover
+$menuActiveBg: #E6EFFF; // Light primary background
 
-$subMenuBg: #ffffff;
-$subMenuHover: #f0f7ff;
+$subMenuBg: #FFFFFF;
+$subMenuHover: rgba(0, 0, 0, 0.04);
 
-$sideBarWidth: 220px; // Slightly wider for modern feel
+$sideBarWidth: 220px;
 $sideBarWidthCollapsed: 64px;
 
 // Navbar
 $navbarHeight: 60px;
-$navbarBg: #ffffff;
-$navbarShadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+$navbarBg: #FFFFFF;
+$navbarShadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
 
 // TagsView
 $tagsViewHeight: 34px;
-$tagsViewBg: #ffffff;
+$tagsViewBg: #FFFFFF;
 
 // Main Content
-$mainBg: #f0f2f5; // Light gray background for dashboard area
+$mainBg: #F2F3F5; // Matches --color-bg-layout
 
 // Colors
-$primary: #4080FF;
-$success: #52C41A;
-$warning: #FAAD14;
-$danger: #FF4D4F;
-$info: #909399;
+$primary: #0052D9;
+$success: #00A870;
+$warning: #ED7B2F;
+$danger: #E34D59;
+$info: #888888;

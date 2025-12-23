@@ -85,9 +85,9 @@ onMounted(() => {
 .tags-view-container {
   height: $tagsViewHeight;
   width: 100%;
-  background: #fff;
-  border-bottom: 1px solid #e6e6e6;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background: var(--color-bg-container);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-1);
 
   .tags-view-wrapper {
     .tags-view-item {
@@ -97,8 +97,8 @@ onMounted(() => {
       height: 28px; // Slightly taller for better click area
       line-height: 28px;
       border: none; // Remove border
-      border-radius: 6px; // Smooth rounded
-      color: #6b7280; // Medium grey
+      border-radius: var(--border-radius-base); // Smooth rounded
+      color: var(--color-text-regular); // Medium grey
       background: transparent;
       padding: 0 12px;
       font-size: 13px;
@@ -107,8 +107,8 @@ onMounted(() => {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
       &:hover {
-        background-color: #f3f4f6;
-        color: #111827;
+        background-color: var(--color-bg-spotlight);
+        color: var(--color-text-primary);
 
         .close-icon {
           opacity: 1;
@@ -125,10 +125,11 @@ onMounted(() => {
       }
 
       &.active {
-        background-color: #ffffff;
-        color: var(--el-color-primary);
+        background-color: var(--color-bg-spotlight); // Use semantic color if available or keep hardcoded for now, but spotlight is good for active/selected
+        background-color: #E6EFFF; // Hardcoded matches var(--color-primary-light-9) approximately
+        color: var(--color-primary);
         font-weight: 500;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 2px 4px 0 rgba(64, 158, 255, 0.15); // Subtle shadow
+        box-shadow: none;
 
         &::before {
           display: none; // Remove the dot
@@ -148,17 +149,12 @@ onMounted(() => {
         justify-content: center;
         opacity: 0; // Hidden by default
         transform: scale(0.8);
-        color: #9ca3af;
+        color: var(--color-text-secondary);
 
         &:hover {
-          background-color: #fee2e2; // Light red bg
-          color: #ef4444; // Red text
+          background-color: var(--color-danger); // Light red bg
+          color: #ffffff; // Red text
         }
-
-        // Always show on active tag? User said "Only in Hover".
-        // But UX-wise, active tag might need close button visible?
-        // "Close button: Only in Hover (Hover) display close icon, keep visual interface minimal and focused."
-        // I will follow instruction strictly: Only on hover.
       }
     }
   }

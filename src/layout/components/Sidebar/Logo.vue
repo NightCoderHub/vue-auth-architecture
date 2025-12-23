@@ -74,7 +74,7 @@ const logo = ref(logoImg);
       line-height: 50px;
       font-size: 16px;
       vertical-align: middle;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      font-family: var(--font-family);
     }
   }
 }

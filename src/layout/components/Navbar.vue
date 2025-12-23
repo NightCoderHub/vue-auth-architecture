@@ -125,11 +125,11 @@ watch(
   height: $navbarHeight;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  background: var(--color-bg-container);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
   box-shadow: none !important;
 
   .left-menu {
@@ -147,7 +147,7 @@ watch(
     padding: 0 15px;
     display: flex;
     align-items: center;
-    color: #374151;
+    color: var(--color-text-primary);
 
     &:hover {
       background: rgba(0, 0, 0, 0.025);
@@ -159,28 +159,28 @@ watch(
     margin-left: 24px; // Increased spacing
 
     :deep(.el-breadcrumb__separator) {
-      color: #d1d5db; // Light grey
+      color: var(--color-text-placeholder);
       font-weight: 400;
     }
 
     :deep(.el-breadcrumb__inner) {
-      color: #9ca3af; // Light grey for previous levels
+      color: var(--color-text-secondary);
       font-weight: 400;
 
       a {
-        color: #9ca3af;
+        color: var(--color-text-secondary);
         font-weight: 400;
         transition: all 0.2s;
 
         &:hover {
-          color: var(--el-color-primary);
+          color: var(--color-primary);
           text-decoration: underline;
         }
       }
     }
 
     :deep(.no-redirect) {
-      color: #374151; // Bold dark for current level
+      color: var(--color-text-primary);
       cursor: text;
       font-weight: 600;
     }
