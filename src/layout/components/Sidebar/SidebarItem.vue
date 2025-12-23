@@ -236,7 +236,23 @@ const isExternalUrl = (path: string) => {
 :deep(.el-menu-item),
 :deep(.el-sub-menu__title) {
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05) !important;
+    background-color: $menuHover !important;
+    color: $primary !important;
   }
+}
+
+// Active Menu Item
+:deep(.el-menu-item.is-active) {
+  background-color: $menuActiveBg !important;
+  color: $menuActiveText !important;
+  border-right: 3px solid $primary;
+
+  .el-icon {
+    color: $menuActiveText !important;
+  }
+}
+
+:deep(.el-sub-menu.is-active > .el-sub-menu__title) {
+  color: $menuActiveText !important;
 }
 </style>

@@ -7,7 +7,7 @@
         <p class="welcome-subtitle">
           系统运行正常 | 安全等级: <span class="security-level">高</span> |
           <span class="status-item">
-            <el-icon class="status-icon" :class="wsStatus"><Connection /></el-icon>
+            <el-icon class="status-icon" :class="wsStatus === 'connected' ? 'connected' : 'disconnected'"><Connection /></el-icon>
             实时连接: {{ wsStatus === 'connected' ? '在线' : '离线' }}
           </span>
         </p>
@@ -43,11 +43,11 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="20" class="main-content">
+    <el-row :gutter="24" class="main-content">
       <!-- 3. 左侧：智能推荐与快捷操作 (Smart & Intelligent) -->
       <el-col :xs="24" :lg="16">
         <!-- 智能建议 -->
-        <el-card shadow="hover" class="smart-card mb-20">
+        <el-card shadow="hover" class="smart-card">
           <template #header>
             <div class="card-header">
               <span class="title-with-icon">
@@ -71,7 +71,7 @@
         </el-card>
 
         <!-- 权限验证区 (Functional) -->
-        <el-card shadow="hover" class="action-card mb-20">
+        <el-card shadow="hover" class="action-card">
           <template #header>
             <div class="card-header">
               <span class="title-with-icon">
@@ -104,7 +104,7 @@
       <!-- 4. 右侧：安全审计与开发者工具 (Safe & Reliable + Authoritative) -->
       <el-col :xs="24" :lg="8">
         <!-- 用户信息 -->
-        <el-card shadow="hover" class="profile-card mb-20">
+        <el-card shadow="hover" class="profile-card">
           <div class="user-info-compact">
             <div class="avatar-circle">{{ user?.username?.charAt(0).toUpperCase() }}</div>
             <div class="info-text">
@@ -184,7 +184,7 @@ import apiClient from '../axios';
 import { wsStatus, closePermissionChannel } from '../permission/permissionChannel';
 import {
   Connection, Key, Cpu,
-  Timer, Refresh, SwitchButton, Tools, Delete
+  Timer, Refresh, SwitchButton, Tools, Delete,Menu
 } from '@element-plus/icons-vue';
 
 // --- Stores & State ---
@@ -266,10 +266,12 @@ const updateRolePermissions = async () => {
 </script>
 
 <style lang="scss" scoped>
+    @use 'sass:color';
 @use '@/styles/variables.module.scss' as *;
 
 .dashboard-container {
   padding: 24px;
+  background-color: transparent;
 }
 
 /* 1. Welcome Section */
@@ -277,38 +279,39 @@ const updateRolePermissions = async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+  background: #fff;
+  padding: 24px 32px;
+  border-radius: var(--app-card-radius);
+  box-shadow: 0 1px 2px rgba(0, 21, 41, 0.05);
 
-  .welcome-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2d3d;
-    margin: 0 0 8px 0;
-  }
-
-  .welcome-subtitle {
-    font-size: 14px;
-    color: #606266;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    .security-level {
-      color: var(--el-color-success);
-      font-weight: 600;
+  .welcome-content {
+    .welcome-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: $menuText;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
     }
 
-    .status-item {
-      display: inline-flex;
+    .welcome-subtitle {
+      font-size: 14px;
+      color: $info;
+      margin: 0;
+      display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 16px;
 
-      .status-icon {
-        font-size: 12px;
-        &.connected { color: var(--el-color-success); }
-        &.connecting { color: var(--el-color-warning); }
-        &.disconnected { color: var(--el-color-info); }
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .status-icon {
+            font-size: 16px;
+            &.connected { color: var(--el-color-success); }
+            &.disconnected { color: var(--el-color-danger); }
+        }
       }
     }
   }
@@ -320,19 +323,18 @@ const updateRolePermissions = async () => {
 
   .metric-card {
     border: none;
-    border-radius: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: var(--app-card-radius);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    height: 100%;
 
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
     }
 
     :deep(.el-card__body) {
-      display: flex;
-      align-items: flex-start;
-      padding: 20px;
+        padding: 20px 24px;
     }
 
     .metric-icon {
@@ -343,46 +345,45 @@ const updateRolePermissions = async () => {
       align-items: center;
       justify-content: center;
       font-size: 24px;
-      margin-right: 16px;
-      flex-shrink: 0;
+      margin-bottom: 16px;
 
-      &.primary { background: var(--el-color-primary-light-9); color: var(--el-color-primary); }
+      &.primary { background: rgba($primary, 0.1); color: $primary; }
       &.success { background: var(--el-color-success-light-9); color: var(--el-color-success); }
       &.warning { background: var(--el-color-warning-light-9); color: var(--el-color-warning); }
       &.danger { background: var(--el-color-danger-light-9); color: var(--el-color-danger); }
     }
 
     .metric-info {
-      flex-grow: 1;
-
       .metric-label {
         font-size: 14px;
-        color: #909399;
-        margin-bottom: 4px;
+        color: $info;
+        margin-bottom: 8px;
       }
 
       .metric-value {
-        font-size: 24px;
-        font-weight: 700;
-        color: #303133;
-        margin-bottom: 4px;
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 8px;
 
+        .number {
+          font-size: 28px;
+          font-weight: 700;
+          color: $menuText;
+          font-family: system-ui, -apple-system, sans-serif;
+        }
         .unit {
           font-size: 14px;
-          color: #909399;
+          color: $info;
           margin-left: 4px;
-          font-weight: normal;
         }
       }
 
       .metric-trend {
-        font-size: 12px;
+        font-size: 13px;
         display: flex;
         align-items: center;
-        gap: 2px;
+        gap: 4px;
 
-        &.up { color: var(--el-color-danger); } /* Stock market style: Red is up/hot, Green is down/safe? Or standard? Let's use standard green for good, red for bad. But trend up usually green? In China red is up. Let's stick to standard: Green Up. Wait, standard western is Green Up. */
-        /* Actually for metrics like 'Latency', up is bad. Let's keep it simple. */
         &.up { color: var(--el-color-success); }
         &.down { color: var(--el-color-danger); }
       }
@@ -391,57 +392,72 @@ const updateRolePermissions = async () => {
 }
 
 /* Common Card Styles */
-.el-card {
+.smart-card, .action-card, .profile-card, .dev-tools-card {
   border: none;
-  border-radius: 12px;
+  border-radius: var(--app-card-radius);
+  margin-bottom: 24px;
+  box-shadow: 0 1px 2px rgba(0, 21, 41, 0.05);
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  :deep(.el-card__header) {
+    border-bottom: 1px solid var(--el-border-color-lighter);
+    padding: 16px 24px;
+  }
 
-    .title-with-icon {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
-      font-size: 16px;
-    }
+  :deep(.el-card__body) {
+      padding: 24px;
   }
 }
 
-/* 3. Smart Suggestions */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .title-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: $menuText;
+  }
+}
+
+/* Suggestion List */
 .suggestions-list {
   .suggestion-item {
     display: flex;
     align-items: flex-start;
     padding: 16px;
-    background: #f9fafc;
     border-radius: 8px;
+    background: var(--el-fill-color-light);
     margin-bottom: 12px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: var(--el-fill-color);
+    }
 
     .suggestion-icon {
-      margin-right: 12px;
+      margin-right: 16px;
       font-size: 20px;
-      padding-top: 2px;
-
+      margin-top: 2px;
       &.warning { color: var(--el-color-warning); }
       &.success { color: var(--el-color-success); }
     }
 
     .suggestion-content {
-      flex-grow: 1;
-
+      flex: 1;
       h4 {
         margin: 0 0 4px 0;
         font-size: 14px;
-        color: #303133;
+        color: $menuText;
+        font-weight: 600;
       }
-
       p {
         margin: 0;
-        font-size: 12px;
-        color: #909399;
+        font-size: 13px;
+        color: $info;
         line-height: 1.5;
       }
     }
@@ -450,74 +466,76 @@ const updateRolePermissions = async () => {
 
 /* Permission Grid */
 .permission-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+    display: flex;
+    align-items: flex-start;
 
-  .permission-group {
-    flex: 1;
-    min-width: 200px;
+    .permission-group {
+        flex: 1;
+        padding: 0 12px;
 
-    .group-label {
-      display: block;
-      font-size: 12px;
-      color: #909399;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+        .group-label {
+            display: block;
+            font-size: 12px;
+            color: $info;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .group-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
     }
-
-    .group-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-  }
 }
 
-/* 4. Profile & Tools */
+/* Profile Card */
 .user-info-compact {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 
   .avatar-circle {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%);
-    color: white;
+    background: linear-gradient(135deg, $primary, color.adjust($primary, $lightness: 20%));
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: 700;
     margin-right: 16px;
+    box-shadow: 0 4px 12px rgba($primary, 0.3);
   }
 
   .info-text {
     .name {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
-      color: #303133;
-      margin-bottom: 4px;
+      color: $menuText;
+      margin-bottom: 6px;
+    }
+    .role-tags {
+        display: flex;
+        gap: 4px;
     }
   }
 }
 
 .security-status-list {
-  background: #f9fafc;
-  border-radius: 8px;
-  padding: 12px;
-
   .status-row {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
-    margin-bottom: 8px;
-    color: #606266;
+    font-size: 14px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--el-border-color-lighter);
 
-    &:last-child { margin-bottom: 0; }
+    &:last-child { border-bottom: none; }
+
+    span:first-child { color: $info; }
 
     .status-val {
       display: flex;
@@ -529,19 +547,19 @@ const updateRolePermissions = async () => {
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: currentColor;
       }
 
-      &.success { color: var(--el-color-success); }
-      &.danger { color: var(--el-color-danger); }
-      &.text-gray { color: #909399; }
+      &.success { color: var(--el-color-success); .dot { background: var(--el-color-success); } }
+      &.danger { color: var(--el-color-danger); .dot { background: var(--el-color-danger); } }
+      &.text-gray { color: $info; }
     }
   }
 }
 
+/* Dev Tools */
 .tool-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-bottom: 20px;
 
@@ -549,44 +567,33 @@ const updateRolePermissions = async () => {
     margin: 0 !important;
     height: auto;
     padding: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    justify-content: flex-start;
+    border-radius: 8px;
 
-    &.danger {
-      grid-column: span 2;
-      border-color: var(--el-color-danger-light-8);
-      color: var(--el-color-danger);
-      background: var(--el-color-danger-light-9);
-
-      &:hover {
-        background: var(--el-color-danger);
-        color: white;
-      }
-    }
+    span { margin-left: 6px; }
   }
 }
 
 .mini-console {
-  background: #1f2d3d;
+  background: #282c34;
   border-radius: 8px;
-  padding: 12px;
-  font-family: 'Fira Code', monospace;
+  padding: 16px;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
   font-size: 12px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
 
   .console-header {
     display: flex;
     justify-content: space-between;
-    color: #909399;
-    margin-bottom: 8px;
-    font-size: 11px;
-    text-transform: uppercase;
+    color: #abb2bf;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #3e4451;
+    padding-bottom: 8px;
 
     .clear-btn {
-      cursor: pointer;
-      &:hover { color: white; }
+        cursor: pointer;
+        transition: color 0.2s;
+        &:hover { color: #fff; }
     }
   }
 
@@ -594,23 +601,38 @@ const updateRolePermissions = async () => {
     max-height: 150px;
     overflow-y: auto;
 
-    /* Scrollbar for console */
-    &::-webkit-scrollbar { width: 4px; }
-    &::-webkit-scrollbar-thumb { background: #4a5a6a; border-radius: 2px; }
-
     .log-line {
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       line-height: 1.4;
-
-      .time { color: #667eea; margin-right: 8px; }
-      .msg { color: #e6e6e6; }
+      .time { color: #5c6370; margin-right: 8px; user-select: none; }
+      .msg { color: #98c379; }
     }
   }
 }
 
-/* Utilities */
-.mb-20 { margin-bottom: 20px; }
-.text-primary { color: var(--el-color-primary); }
-.text-warning { color: var(--el-color-warning); }
-.text-success { color: var(--el-color-success); }
+// Mobile Responsive
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 16px;
+    }
+
+    .welcome-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+
+        .header-actions {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+        }
+    }
+
+    .metric-cards {
+        margin-bottom: 16px;
+        .el-col {
+            margin-bottom: 16px;
+        }
+    }
+}
 </style>

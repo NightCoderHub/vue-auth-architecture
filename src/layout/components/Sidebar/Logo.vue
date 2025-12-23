@@ -69,11 +69,12 @@ const logo = ref(logoImg);
     .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
+      color: $menuText;
       font-weight: 600;
       line-height: 50px;
-      font-size: 14px;
+      font-size: 16px;
       vertical-align: middle;
+      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
     }
   }
 }

@@ -1,37 +1,52 @@
-/* 只需要重写你需要的变量 */
+/* Element Plus Theme Overrides */
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      'base': #647eff,
+      'base': #4080FF,
     ),
     'success': (
-      'base': #42d392,
+      'base': #52C41A,
     ),
     'warning': (
-      'base': #e6a23c,
+      'base': #FAAD14,
     ),
     'danger': (
-      'base': #f56c6c,
-    ),
-    'error': (
-      'base': #f56c6c,
+      'base': #FF4D4F,
     ),
     'info': (
       'base': #909399,
     ),
   ),
   $border-radius: (
-    'base': 4px,
-    'small': 2px,
+    'base': 6px,
+    'small': 4px,
     'round': 20px,
     'circle': 100%,
   ),
   $box-shadow: (
     'base': (
-      0 2px 12px 0 rgba(0, 0, 0, 0.1),
+      0 2px 12px 0 rgba(0, 0, 0, 0.05), // Softer shadow
+    ),
+    'light': (
+      0 2px 12px 0 rgba(0, 0, 0, 0.03),
     ),
   ),
 );
 
-// 全局样式覆盖
+// Global overrides
+:root {
+  --el-border-radius-base: 6px;
 
+  // Custom Design Tokens
+  --app-main-bg: #f0f2f5;
+  --app-card-bg: #ffffff;
+  --app-card-radius: 8px;
+  --app-card-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+}
+
+
+.el-card {
+  border: none;
+  border-radius: var(--app-card-radius);
+  // box-shadow: var(--app-card-shadow) !important; // Optional: Element Plus card has its own shadow, we can refine it
+}

@@ -69,8 +69,8 @@ const handleClickOutside = () => {
   overflow: hidden;
   flex-shrink: 0;
   z-index: 1001;
-  box-shadow: none;
-  border-right: none;
+  box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
 
   :deep(.el-scrollbar__view) {
     height: 100%;
@@ -90,40 +90,21 @@ const handleClickOutside = () => {
   flex-direction: column;
   min-width: 0;
   height: 100%;
-  background-color: #f0f2f5;
+  background-color: $mainBg;
   position: relative;
 }
 
 .layout-header {
   width: 100%;
   flex-shrink: 0;
-  background: #fff;
-  z-index: 9;
-  transition: none; // No transition needed for width as it's flex
+  background: $navbarBg;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  z-index: 1000;
 }
 
-// Sidebar Width Logic
-.hideSidebar .sidebar-container {
-  width: $sideBarWidthCollapsed !important;
-}
-
-// Mobile Responsive
-.mobile {
+.hideSidebar {
   .sidebar-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: transform 0.28s;
-  }
-
-  &.openSidebar .sidebar-container {
-    transform: translate3d(0, 0, 0);
-  }
-
-  &.hideSidebar .sidebar-container {
-    width: $sideBarWidth !important; // Maintain width for transform
-    pointer-events: none;
-    transform: translate3d(-$sideBarWidth, 0, 0);
+    width: $sideBarWidthCollapsed !important;
   }
 }
 </style>

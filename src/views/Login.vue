@@ -3,7 +3,7 @@
     <div class="login-content">
       <div class="login-header">
         <div class="logo-circle">
-          <el-icon :size="40" color="#fff"><Lock /></el-icon>
+          <el-icon><Lock /></el-icon>
         </div>
         <h2 class="title">Vue 前端鉴权架构</h2>
         <p class="subtitle">企业级中后台权限管理系统方案</p>
@@ -47,7 +47,6 @@
               @click="handleLogin"
               :loading="loading"
               class="login-button"
-              round
             >
               {{ loading ? '登录中...' : '登 录' }}
             </el-button>
@@ -111,102 +110,85 @@ const handleLogin = async () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+    @use 'sass:color';
+@use '@/styles/variables.module.scss' as *;
+
 .login-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #1c1c1e 0%, #2c3e50 100%);
+  background-color: #f0f2f5;
+  background-image:
+    radial-gradient(rgba($primary, 0.1) 1px, transparent 1px),
+    radial-gradient(rgba($primary, 0.1) 1px, #f0f2f5 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
   position: relative;
   overflow: hidden;
-}
-
-/* Background Pattern Overlay */
-.login-container::before {
-  content: '';
-  position: absolute;
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-  opacity: 0.3;
-  transform: rotate(45deg);
 }
 
 .login-content {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   padding: 20px;
   animation: fadeInUp 0.8s ease-out;
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 30px;
-  color: #fff;
+  margin-bottom: 32px;
 }
 
 .logo-circle {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #42d392 0%, #647eff 100%);
-  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  background: $primary;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto 20px;
-  box-shadow: 0 10px 25px rgba(66, 211, 146, 0.3);
-  transition: transform 0.3s ease;
-}
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 24px rgba($primary, 0.25);
 
-.logo-circle:hover {
-  transform: scale(1.05) rotate(5deg);
+  :deep(.el-icon) {
+      font-size: 28px;
+      color: #fff;
+  }
 }
 
 .title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
-  margin: 0 0 10px;
-  letter-spacing: 1px;
+  margin: 0 0 8px;
+  color: $menuText;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
+  color: $info;
   margin: 0;
-  letter-spacing: 0.5px;
 }
 
 .login-card {
-  border-radius: 16px;
+  border-radius: 8px;
   border: none;
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+  background: #ffffff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
 
-.login-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-}
-
-:deep(.el-card__body) {
-  padding: 30px 30px 20px;
+  :deep(.el-card__body) {
+    padding: 32px;
+  }
 }
 
 .form-options {
@@ -218,25 +200,24 @@ const handleLogin = async () => {
 
 .login-button {
   width: 100%;
-  height: 44px;
+  height: 40px;
   font-size: 16px;
-  font-weight: 600;
-  background: linear-gradient(90deg, #42d392 0%, #647eff 100%);
-  border: none;
+  font-weight: 500;
+  background-color: $primary;
+  border-color: $primary;
+  border-radius: 4px;
   transition: all 0.3s ease;
-}
 
-.login-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(100, 126, 255, 0.3);
-}
-
-.login-button:active {
-  transform: translateY(0);
+  &:hover {
+      background-color: color.adjust($primary, $lightness: 5%);
+      border-color: color.adjust($primary, $lightness: 5%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($primary, 0.3);
+  }
 }
 
 .divider-text {
-  color: #909399;
+  color: #c0c4cc;
   font-size: 12px;
 }
 
@@ -244,17 +225,20 @@ const handleLogin = async () => {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 16px;
 }
 
 .tip-tag {
   font-family: monospace;
+  background-color: #f4f4f5;
+  border-color: #e9e9eb;
+  color: #909399;
 }
 
 .footer {
   text-align: center;
   margin-top: 24px;
-  color: rgba(255, 255, 255, 0.4);
+  color: $info;
   font-size: 12px;
 }
 
@@ -262,21 +246,23 @@ const handleLogin = async () => {
 :deep(.el-input__wrapper) {
   box-shadow: 0 0 0 1px #dcdfe6 inset;
   padding: 1px 11px;
-  background-color: #f5f7fa;
+  background-color: #fff;
   transition: all 0.2s ease;
-}
+  border-radius: 4px;
 
-:deep(.el-input__wrapper:hover) {
-  background-color: #fff;
-}
+  &:hover {
+      box-shadow: 0 0 0 1px $primary inset;
+  }
 
-:deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 2px #647eff inset !important;
-  background-color: #fff;
+  &.is-focus {
+      box-shadow: 0 0 0 1px $primary inset !important;
+  }
 }
 
 :deep(.el-form-item__label) {
-  font-weight: 600;
-  color: #303133;
+  padding-bottom: 8px;
+  line-height: 1.2;
+  color: $menuText;
+  font-weight: 500;
 }
 </style>

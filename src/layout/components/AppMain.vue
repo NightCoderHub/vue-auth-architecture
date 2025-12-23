@@ -8,7 +8,7 @@
       </transition>
     </router-view>
     <footer class="app-footer">
-      <span>Copyright © 2025 Vue Admin. All Rights Reserved.</span>
+      <span>© 2025 Vue Auth Architecture. 开源项目.</span>
     </footer>
   </section>
 </template>
@@ -29,8 +29,8 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
   width: 100%;
   position: relative;
   overflow: auto;
-  padding: 20px;
-  background-color: #f0f2f5;
+  // padding: 20px;
+  background-color: $mainBg;
   display: flex;
   flex-direction: column;
 }
@@ -39,7 +39,7 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
   margin-top: auto;
   text-align: center;
   padding: 20px 0 0;
-  color: #909399;
+  color: $info;
   font-size: 14px;
 }
 
