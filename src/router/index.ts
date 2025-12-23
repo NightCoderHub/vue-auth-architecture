@@ -41,7 +41,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes: constantRoutes,
-  strict: true, // 全局配置：严格匹配尾部斜杠
+  strict: true, // Path Governance: 启用严格模式，精确控制尾随斜杠
 });
 
 export default router;

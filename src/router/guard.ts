@@ -3,16 +3,25 @@ import { useAuthStore } from '../auth/authStore';
 import { usePermissionStore } from '../permission/permissionStore';
 import { restoreSession } from '../auth/authService';
 import { initDynamicRoutes } from '../permission/routeBuilder';
+import { normalizePath } from '../utils/path-governance';
 
 /**
  * 全局路由守卫
  *
  * 强制执行安全策略：
- * 1. 等待认证初始化（引导程序）。
- * 2. 将未认证用户重定向到登录页。
- * 3. 重定向未授权用户 (403) - *待通过权限检查实现*
+ * 1. Path Governance: 统一路径格式（移除尾随斜杠）
+ * 2. 等待认证初始化（引导程序）。
+ * 3. 将未认证用户重定向到登录页。
+ * 4. 重定向未授权用户 (403) - *待通过权限检查实现*
  */
 router.beforeEach(async (to, _from, next) => {
+  // 1. Path Governance: 强制移除尾随斜杠
+  // 如果路径以 / 结尾且不是根路径，则重定向到标准路径
+  if (to.path !== '/' && to.path.endsWith('/')) {
+    const normalized = normalizePath(to.fullPath);
+    return next({ path: normalized, replace: true });
+  }
+
   const authStore = useAuthStore();
   const permissionStore = usePermissionStore();
 

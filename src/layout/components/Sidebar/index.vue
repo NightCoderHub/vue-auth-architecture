@@ -30,6 +30,7 @@ import { useAppStore } from '@/stores/app';
 import { usePermissionStore } from '@/permission/permissionStore';
 import Logo from './Logo.vue';
 import SidebarItem from './SidebarItem.vue';
+import { normalizePath } from '@/utils/path-governance';
 
 import variables from '@/styles/variables.module.scss';
 
@@ -74,10 +75,16 @@ const permission_routes = computed(() => {
  */
 const activeMenu = computed(() => {
   const { meta, path } = route;
+  
+  let activePath = path;
   if (meta.activeMenu) {
-    return meta.activeMenu as string;
+    activePath = meta.activeMenu as string;
   }
-  return path;
+
+  // Path Governance: 使用统一的规范化工具
+  const normalized = normalizePath(activePath);
+
+  return normalized;
 });
 </script>
 

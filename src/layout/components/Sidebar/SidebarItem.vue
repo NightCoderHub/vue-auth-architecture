@@ -55,6 +55,7 @@ import { computed } from 'vue';
 import type { PropType } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 import AppLink from './Link.vue';
+import { normalizePath } from '@/utils/path-governance';
 
 
 defineOptions({
@@ -219,7 +220,8 @@ const resolvePath = (routePath: string, externalLink?: string) => {
   const basePath = props.basePath.endsWith('/') ? props.basePath : props.basePath + '/';
   const cleanPath = (basePath + routePath).replace(/\/+/g, '/');
 
-  return cleanPath;
+  // Path Governance: 最终路径必须经过标准化处理
+  return normalizePath(cleanPath);
 };
 
 // 内联 isExternal 工具函数

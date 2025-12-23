@@ -5,6 +5,7 @@ import { usePermissionStore } from './permissionStore';
 import type { MenuItem, ApiResponse } from '../auth/authTypes';
 import Layout from '@/layout/index.vue';
 import apiClient from '../axios';
+import { normalizePath } from '../utils/path-governance';
 // 追踪动态添加的路由以便清理
 let addedRouteNames: string[] = [];
 
@@ -98,11 +99,16 @@ function generateRoutesFromMenu(menus: MenuItem[]): RouteRecordRaw[] {
 
   for (const item of menus) {
     // 基础路由结构
+    // Path Governance: 规范化后端返回的路径和重定向
+    // 确保注入 Router 的路径不带尾随斜杠
+    const normalizedPath = normalizePath(item.path);
+    const normalizedRedirect = item.redirect ? normalizePath(item.redirect) : undefined;
+
     // 使用 as any 规避 RouteRecordRaw 的联合类型推断问题
     // 因为 RouteRecordRaw 是 RouteRecordSingleView | RouteRecordMultipleViews | RouteRecordRedirect 的联合类型
     // 动态构建时很难满足所有严格的类型约束
     const route: any = {
-      path: item.path,
+      path: normalizedPath,
       name: item.name,
       // 如果是顶级菜单且没有 component，通常使用 Layout
       // 如果是子菜单，根据 component 字段动态加载组件
@@ -118,7 +124,8 @@ function generateRoutesFromMenu(menus: MenuItem[]): RouteRecordRaw[] {
         affix: item.affix ?? false,
         alwaysShow: item.alwaysShow ?? true,
         externalLink: item.externalLink,
-        activeMenu: item.activeMenu,
+        frameSrc: item.frameSrc,
+        activeMenu: item.activeMenu ? normalizePath(item.activeMenu) : null, // 同样规范化 activeMenu
         fullScreen: item.fullScreen ?? false,
         orderNo: item.sort ?? 0,
         enabled: item.enabled ?? true,
@@ -128,8 +135,8 @@ function generateRoutesFromMenu(menus: MenuItem[]): RouteRecordRaw[] {
       }
     };
 
-    if (item.redirect) {
-      route.redirect = item.redirect;
+    if (normalizedRedirect) {
+      route.redirect = normalizedRedirect;
     }
 
     // 递归处理子路由

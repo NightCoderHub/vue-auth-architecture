@@ -74,6 +74,12 @@ declare module 'vue-router' {
     externalLink?: string;
 
     /**
+     * 【可选/交互】内嵌 Iframe 地址
+     * 如果设置，将在内容区嵌入 Iframe
+     */
+    frameSrc?: string;
+
+    /**
      * 【可选/布局】是否隐藏面包屑
      * @default false
      */

@@ -21,7 +21,7 @@ const route = useRoute()
 const loading = ref(true)
 
 const frameSrc = computed(() => {
-  return route.meta.frameSrc as string
+  return route.meta.frameSrc
 })
 
 const onLoad = () => {
