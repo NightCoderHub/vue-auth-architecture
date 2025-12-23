@@ -225,7 +225,7 @@ const assignRoleMenus = async () => {
     try {
         // 模拟分配给 ID 为 1 的角色，分配菜单 ID [1, 2, 3]
         const roleId = 2;
-        const menuIds = [6, 7, 8,9,10,11];
+        const menuIds = [5,6, 7, 8,9,10,11];
         await apiClient.put(`/roles/${roleId}/menus`, { menuIds });
         log('✅ 菜单分配成功');
     } catch (e) {
