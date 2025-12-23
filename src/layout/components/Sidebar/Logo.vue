@@ -29,7 +29,7 @@ const logo = ref(logoImg);
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/variables.module.scss' as *;
+@use '@/styles/variables.scss' as *;
 
 .sidebarLogoFade-enter-active {
   transition: opacity 1.5s;

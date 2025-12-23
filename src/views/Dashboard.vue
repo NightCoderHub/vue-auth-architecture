@@ -267,7 +267,7 @@ const updateRolePermissions = async () => {
 
 <style lang="scss" scoped>
     @use 'sass:color';
-@use '@/styles/variables.module.scss' as *;
+@use '@/styles/variables.scss' as *;
 
 .dashboard-container {
   padding: 24px;

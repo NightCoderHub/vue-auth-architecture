@@ -118,7 +118,7 @@ const handleDocs = () => {
 </script>
 
 <style scoped lang="scss">
-@use '@/styles/variables.module.scss' as *;
+@use '@/styles/variables.scss' as *;
 
 .home-container {
   padding: 24px;

@@ -1,36 +1,4 @@
-// Sidebar
-$menuText: #303133; // Dark Gray for text
-$menuActiveText: #4080FF; // Primary Blue for active text
-$subMenuActiveText: #4080FF;
-
-$menuBg: #ffffff; // White background
-$menuHover: #f0f7ff; // Very light blue hover
-$menuActiveBg: #e6f7ff; // Light blue active background
-
-$subMenuBg: #ffffff;
-$subMenuHover: #f0f7ff;
-
-$sideBarWidth: 220px; // Slightly wider for modern feel
-$sideBarWidthCollapsed: 64px;
-
-// Navbar
-$navbarHeight: 60px;
-$navbarBg: #ffffff;
-$navbarShadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-
-// TagsView
-$tagsViewHeight: 34px;
-$tagsViewBg: #ffffff;
-
-// Main Content
-$mainBg: #f0f2f5; // Light gray background for dashboard area
-
-// Colors
-$primary: #4080FF;
-$success: #52C41A;
-$warning: #FAAD14;
-$danger: #FF4D4F;
-$info: #909399;
+@use "variables" as *;
 
 // Export for JS
 :export {

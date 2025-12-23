@@ -80,7 +80,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/variables.module.scss' as *;
+@use '@/styles/variables.scss' as *;
 
 .tags-view-container {
   height: $tagsViewHeight;

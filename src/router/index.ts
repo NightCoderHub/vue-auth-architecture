@@ -1,13 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import Layout from '@/layout/index.vue';
-import Login from '@/views/Login.vue';
 
 // 常量路由：不需要权限即可访问
 export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'Login',
-    component: Login,
+    component: () => import('@/views/Login.vue'),
     meta: { title: '登录', hidden: true }
   },
   {

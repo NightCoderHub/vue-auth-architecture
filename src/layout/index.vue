@@ -40,7 +40,7 @@ const handleClickOutside = () => {
 
 <style lang="scss" scoped>
 @use '@/styles/element/index.scss' as *;
-@use '@/styles/variables.module.scss' as *;
+@use '@/styles/variables.scss' as *;
 
 .app-wrapper {
   display: flex;

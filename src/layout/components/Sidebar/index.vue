@@ -89,7 +89,7 @@ const activeMenu = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/variables.module.scss' as *;
+@use '@/styles/variables.scss' as *;
 
 .has-logo {
   .el-scrollbar {

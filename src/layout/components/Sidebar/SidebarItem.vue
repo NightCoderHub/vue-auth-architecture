@@ -231,7 +231,7 @@ const isExternalUrl = (path: string) => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/variables.module.scss' as *;
+@use '@/styles/variables.scss' as *;
 
 :deep(.el-menu-item),
 :deep(.el-sub-menu__title) {

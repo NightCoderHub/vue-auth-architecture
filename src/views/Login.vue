@@ -112,7 +112,7 @@ const handleLogin = async () => {
 
 <style scoped lang="scss">
     @use 'sass:color';
-@use '@/styles/variables.module.scss' as *;
+@use '@/styles/variables.scss' as *;
 
 .login-container {
   min-height: 100vh;
