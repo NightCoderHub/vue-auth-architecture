@@ -32,7 +32,19 @@ export function initPermissionChannel() {
     return;
   }
 
+  // 确保先清理旧连接（防止重复初始化）
+  if (socket) {
+    closePermissionChannel();
+  }
+
+  // 添加页面卸载时的清理逻辑
+  window.addEventListener('beforeunload', handleBeforeUnload);
+
   connectWebSocket(token);
+}
+
+function handleBeforeUnload() {
+  closePermissionChannel();
 }
 
 /**
@@ -42,7 +54,7 @@ function connectWebSocket(token: string) {
   if (socket) return; // 避免重复连接
 
   const wsUrl = `ws://localhost:3000?token=${token}`;
-  console.log('[PermissionChannel] 正在连接 WebSocket:', wsUrl);
+  console.log('[PermissionChannel] 正在连接 WebSocket:', wsUrl); // 记录 URL 方便调试
   wsStatus.value = 'connecting';
 
   try {
@@ -54,7 +66,7 @@ function connectWebSocket(token: string) {
   }
 
   socket.onopen = () => {
-    console.log('[PermissionChannel] WebSocket 已连接');
+    console.log('%c [PermissionChannel] %c WebSocket 已连接', 'color: white; background-color: #52c41a; padding: 2px 5px; border-radius: 4px; font-weight: bold;', 'color: inherit;');
     wsStatus.value = 'connected';
     // 可以在此发送心跳或认证信息（如果需要）
   };
@@ -69,8 +81,16 @@ function connectWebSocket(token: string) {
   };
 
   socket.onclose = (event) => {
+    // 如果 socket 已被设为 null (主动关闭)，则不执行后续逻辑
+    if (!socket) {
+        console.log('[PermissionChannel] 连接已主动关闭。');
+        return;
+    }
+
     console.log(`[PermissionChannel] WebSocket 已关闭 (Code: ${event.code}, Reason: ${event.reason})`);
     wsStatus.value = 'disconnected';
+
+    // 清理当前 socket 引用，但在重连逻辑前保留它可能需要的状态（如 URL）
     socket = null;
     cleanupReconnectTimer();
 
@@ -78,21 +98,33 @@ function connectWebSocket(token: string) {
     // 1000: 正常关闭; 1008: 策略违规（如 Token 无效）
     // 仅在非正常关闭且用户仍处于认证状态时重连
     const authStore = useAuthStore();
-    if (event.code !== 1000 && event.code !== 1008 && authStore.isAuthenticated) {
-      console.log('[PermissionChannel] 3秒后尝试重连...');
+    const isNormalClose = event.code === 1000;
+    const isPolicyViolation = event.code === 1008;
+
+    if (!isNormalClose && !isPolicyViolation && authStore.isAuthenticated) {
+      console.log('[PermissionChannel] 连接异常断开，3秒后尝试重连...');
       reconnectTimer = setTimeout(() => {
         // 重新获取最新的 Token（以防 Token 刷新）
         const newToken = authStore.accessToken;
         if (newToken) {
           connectWebSocket(newToken);
+        } else {
+            console.warn('[PermissionChannel] 重连失败: 无法获取有效的 Access Token');
         }
       }, 3000);
+    } else {
+        if (isPolicyViolation) {
+            console.error('[PermissionChannel] 连接被拒绝 (策略违规)。可能 Token 已失效。');
+            // 可选：触发登出
+            // authStore.setLoggedOut();
+        }
     }
   };
 
   socket.onerror = (error) => {
     console.error('[PermissionChannel] WebSocket 错误:', error);
     wsStatus.value = 'error';
+    // onerror 之后通常会触发 onclose，重连逻辑在 onclose 中处理
   };
 }
 
@@ -102,11 +134,22 @@ function connectWebSocket(token: string) {
  */
 export function closePermissionChannel() {
   cleanupReconnectTimer();
+  window.removeEventListener('beforeunload', handleBeforeUnload);
+
   if (socket) {
-    socket.close(1000, 'User logged out');
+    // 移除所有监听器，防止在关闭过程中触发回调（特别是 onclose 导致的重连）
+    socket.onopen = null;
+    socket.onmessage = null;
+    socket.onclose = null;
+    socket.onerror = null;
+
+    if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+        socket.close(1000, 'Client closed connection');
+    }
     socket = null;
   }
   wsStatus.value = 'disconnected';
+  console.log('[PermissionChannel] 连接已彻底关闭并清理。');
 }
 
 function cleanupReconnectTimer() {

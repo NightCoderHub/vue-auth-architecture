@@ -2,7 +2,7 @@ import apiClient from '../axios';
 import { useAuthStore } from './authStore';
 import { usePermissionStore } from '../permission/permissionStore';
 import { resetRouter, initDynamicRoutes } from '../permission/routeBuilder';
-import { initPermissionChannel } from '../permission/permissionChannel';
+import { closePermissionChannel, initPermissionChannel } from '../permission/permissionChannel';
 import { ensureAuthReady } from './refresh';
 import router from '../router';
 import type { ApiResponse, UserInfo } from './authTypes';
@@ -34,7 +34,7 @@ export async function login(username: string, password: string) {
     // 必须先设置 Token，否则后续的 API 请求无法通过拦截器的鉴权
     authStore.setAccessToken(accessToken);
 
-    console.log('[AuthService] Token 获取成功。正在并行获取用户资料和权限...');
+    console.log('%c [AuthService] %c Token 获取成功。正在并行获取用户资料和权限...', 'color: white; background-color: #52c41a; padding: 2px 5px; border-radius: 4px; font-weight: bold;', 'color: inherit;');
 
     // 3. 并行获取个人资料、权限
     const [userRes, permRes] = await Promise.all([
@@ -52,6 +52,8 @@ export async function login(username: string, password: string) {
     // 5. 初始化动态路由 (复用 routeBuilder 中的逻辑)
     await initDynamicRoutes();
 
+    console.log('%c [AuthService] %c 动态路由初始化完成。', 'color: white; background-color: #52c41a; padding: 2px 5px; border-radius: 4px; font-weight: bold;', 'color: inherit;');
+
     // 6. 启动安全通道
     initPermissionChannel();
 
@@ -62,8 +64,10 @@ export async function login(username: string, password: string) {
     console.error('[AuthService] 登录过程失败:', error);
     // 事务回滚：确保登录操作的原子性
     // 如果获取权限失败，不应保持“已认证”状态
+    closePermissionChannel();
     authStore.setLoggedOut();
     permissionStore.clear();
+    console.log('%c [AuthService] %c 会话已重置。', 'color: white; background-color: #52c41a; padding: 2px 5px; border-radius: 4px; font-weight: bold;', 'color: inherit;');
     throw error;
   }
 }

@@ -7,12 +7,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-/**
- * Link Component
- *
- * Automatically renders an anchor tag (<a>) for external links
- * or a <router-link> for internal routes.
- */
 
 const props = defineProps({
   to: {

@@ -145,6 +145,10 @@
                <el-icon><Refresh /></el-icon>
                <span>变更权限</span>
              </el-button>
+             <el-button class="tool-btn" @click="assignRoleMenus">
+               <el-icon><Menu /></el-icon>
+               <span>分配菜单</span>
+             </el-button>
              <el-button class="tool-btn danger" @click="handleLogout">
                <el-icon><SwitchButton /></el-icon>
                <span>安全注销</span>
@@ -215,6 +219,19 @@ const log = (msg: string) => logs.value.unshift(`[${new Date().toLocaleTimeStrin
 watch(wsStatus, (newStatus) => {
   log(`WebSocket 状态变更: ${newStatus}`);
 });
+
+const assignRoleMenus = async () => {
+    log('--- 触发分配菜单测试 ---');
+    try {
+        // 模拟分配给 ID 为 1 的角色，分配菜单 ID [1, 2, 3]
+        const roleId = 2;
+        const menuIds = [6, 7, 8,9,10,11];
+        await apiClient.put(`/roles/${roleId}/menus`, { menuIds });
+        log('✅ 菜单分配成功');
+    } catch (e) {
+        log(`❌ 分配失败: ${e}`);
+    }
+}
 
 const handleLogout = () => {
   closePermissionChannel();

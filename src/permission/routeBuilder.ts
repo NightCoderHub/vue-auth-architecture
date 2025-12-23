@@ -87,7 +87,7 @@ export function buildRoutes(menus: MenuItem[] = []) {
   // 注意：侧边栏菜单可能需要包含 constantRoutes，这里仅设置动态部分
   permissionStore.setMenus(dynamicRoutes);
 
-  console.log('[Permission] 路由已重建:', addedRouteNames);
+  console.log('%c [Permission] %c 路由已重建:', 'color: white; background-color: #52c41a; padding: 2px 5px; border-radius: 4px; font-weight: bold;', 'color: inherit;', addedRouteNames);
 }
 
 /**
@@ -198,12 +198,9 @@ function loadView(viewPath: string) {
   // 这里为了演示方便，如果找不到组件，统一 fallback 到 HomeView
   // 真实项目中应该报错或跳转 404
   const path = `../views/${viewPath}.vue`;
-  console.log('[RouteBuilder] Loading component:', path);
   if (modules[path]) {
     return modules[path];
   } else {
-    // 开发阶段为了容错，如果组件不存在，暂时渲染 HomeView
-    console.warn(`[RouteBuilder] Component not found: ${viewPath}, fallback to HomeView`);
-    return () => import('../views/HomeView.vue');
+    return () => import('../views/NotFound.vue');
   }
 }

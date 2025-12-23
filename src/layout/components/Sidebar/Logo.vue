@@ -17,13 +17,6 @@
 import { ref } from 'vue';
 import logoImg from '@/assets/vue.svg';
 
-/**
- * Sidebar Logo Component
- * 
- * Displays the application logo and title in the sidebar.
- * Adapts to collapsed state.
- */
-
 defineProps({
   collapse: {
     type: Boolean,

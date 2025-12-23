@@ -8,8 +8,7 @@
       >
         <el-icon :size="20"><Expand v-if="!sidebar.opened" /><Fold v-else /></el-icon>
       </div>
-
-      <el-breadcrumb class="breadcrumb-container" :separator-icon="ArrowRight">
+      <el-breadcrumb v-if="!isBreadcrumbHidden" class="breadcrumb-container" :separator-icon="ArrowRight">
         <transition-group name="breadcrumb">
           <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
             <span
@@ -58,28 +57,37 @@ const appStore = useAppStore();
 
 const sidebar = computed(() => appStore.sidebar);
 const avatar = computed(() => userAvatar); // Default avatar
+const isBreadcrumbHidden = computed(() => route.meta.hideBreadcrumb === true);
 
 const levelList = ref<RouteLocationMatched[]>([]);
 
 const getBreadcrumb = () => {
-  let matched = route.matched.filter((item) => item.meta && item.meta.title);
+  let matched = route.matched.filter(
+    (item) => item.meta && item.meta.title && item.meta.hideBreadcrumb !== true
+  );
+
   const first = matched[0];
 
   if (!isHome(first)) {
     matched = [{ path: '/home', meta: { title: '首页' } } as any].concat(matched);
   }
 
-  levelList.value = matched.filter(
-    (item) => item.meta && item.meta.title && item.meta.breadcrumb !== false
-  );
+  // De-duplicate home routes: if multiple routes are identified as home, keep only the first one
+  const homeItems = matched.filter((item) => isHome(item));
+  if (homeItems.length > 1) {
+    const otherItems = matched.filter((item) => !isHome(item));
+    matched = [homeItems[0]!, ...otherItems];
+  }
+
+  levelList.value = matched;
 };
 
 const isHome = (route: RouteLocationMatched | undefined) => {
-  const name = route && route.name;
-  if (!name) {
-    return false;
-  }
-  return (name as string).trim().toLocaleLowerCase() === 'home';
+  if (!route) return false;
+  const name = (route.name as string)?.trim().toLocaleLowerCase();
+  const path = route.path?.trim().toLocaleLowerCase();
+
+  return name === 'home' || name === 'dashboard' || path === '/home' || path === '/';
 };
 
 const handleLink = (item: any) => {

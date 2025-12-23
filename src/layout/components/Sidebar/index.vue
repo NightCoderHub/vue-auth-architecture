@@ -38,50 +38,50 @@ const route = useRoute();
 const appStore = useAppStore();
 const permissionStore = usePermissionStore();
 
-const showLogo = computed(() => true); // Can be controlled by settings
+const showLogo = computed(() => true); // 可以通过设置进行控制
 const isCollapse = computed(() => !appStore.sidebar.opened);
 
 /**
- * Filter and sort routes for the sidebar.
+ * 过滤并排序侧边栏路由。
  *
- * Rules:
- * 1. Filter out hidden or disabled routes.
- * 2. Sort by 'orderNo' (ascending).
+ * 规则：
+ * 1. 过滤掉隐藏或禁用的路由。
+ * 2. 按 'orderNo' 排序（升序）。
  */
 const permission_routes = computed(() => {
   const menus = permissionStore.menus;
 
-  // Filter hidden or disabled routes
+  // 过滤隐藏或禁用的路由
   const filteredMenus = menus.filter(route => {
     const meta = route.meta;
-    if (!meta) return true; // Default visible
+    if (!meta) return true; // 默认可见
     if (meta.hidden === true) return false;
     if (meta.enabled === false) return false;
     return true;
   });
 
-  // Sort by orderNo
+  // 按 orderNo 排序
   return filteredMenus.sort((a, b) => {
     return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
   });
 });
 
 /**
- * Determine the active menu index.
+ * 确定当前激活的菜单索引。
  *
- * Priority:
- * 1. meta.activeMenu (if configured, e.g., for hidden detail pages)
- * 2. route.path (default)
+ * 优先级：
+ * 1. meta.activeMenu（如果已配置，例如用于隐藏的详情页）
+ * 2. route.path（默认）
  */
 const activeMenu = computed(() => {
   const { meta, path } = route;
-  
+
   let activePath = path;
   if (meta.activeMenu) {
     activePath = meta.activeMenu as string;
   }
 
-  // Path Governance: 使用统一的规范化工具
+  // 路径治理：使用统一的规范化工具
   const normalized = normalizePath(activePath);
 
   return normalized;
