@@ -137,9 +137,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.user-edit-container {
-  padding: 20px;
-}
 .card-header {
   display: flex;
   justify-content: space-between;

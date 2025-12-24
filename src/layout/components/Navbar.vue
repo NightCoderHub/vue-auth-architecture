@@ -6,7 +6,7 @@
         :class="{ 'is-active': sidebar.opened }"
         @click="toggleSideBar"
       >
-        <el-icon :size="20"><Expand v-if="!sidebar.opened" /><Fold v-else /></el-icon>
+        <el-icon :size="20" class="hamburger-icon"><Expand v-if="!sidebar.opened" /><Fold v-else /></el-icon>
       </div>
       <el-breadcrumb v-if="!isBreadcrumbHidden" class="breadcrumb-container" :separator-icon="ArrowRight">
         <transition-group name="breadcrumb">
@@ -125,12 +125,18 @@ watch(
   height: $navbarHeight;
   overflow: hidden;
   position: relative;
-  background: var(--color-bg-container);
+  background: var(--color-bg-layout);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: none !important;
+  // border-bottom: 1px solid var(--color-border);
+  box-shadow: none;
+  padding: 0 20px; // Design Spec: 24px horizontal padding
+  transition: padding 0.3s;
+
+  @media (max-width: 768px) {
+    padding: 0 16px; // Mobile: 16px padding
+  }
 
   .left-menu {
     display: flex;
@@ -139,57 +145,62 @@ watch(
   }
 
   .hamburger-container {
-    line-height: $navbarHeight;
-    height: 100%;
-    cursor: pointer;
-    transition: background 0.3s;
-    -webkit-tap-highlight-color: transparent;
-    padding: 0 15px;
+    // width: 32px;
+    // height: 32px;
     display: flex;
     align-items: center;
-    color: var(--color-text-primary);
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 4px; // Soft square
+    color: var(--color-text-regular);
 
     &:hover {
-      background: rgba(0, 0, 0, 0.025);
+      background: var(--color-bg-spotlight); // Use semantic variable
+      color: var(--color-primary);
+    }
+
+    .hamburger-icon {
+      font-size: 20px;
     }
   }
 
   .breadcrumb-container {
-    line-height: $navbarHeight;
-    margin-left: 24px; // Increased spacing
+    margin-left: 16px;
+
+    // Hide breadcrumb on mobile
+    @media (max-width: 768px) {
+      display: none;
+    }
 
     :deep(.el-breadcrumb__separator) {
       color: var(--color-text-placeholder);
-      font-weight: 400;
+      margin: 0 8px;
     }
 
     :deep(.el-breadcrumb__inner) {
-      color: var(--color-text-secondary);
-      font-weight: 400;
+      font-size: 14px;
 
       a {
-        color: var(--color-text-secondary);
+        color: var(--color-text-regular);
         font-weight: 400;
-        transition: all 0.2s;
+        transition: color 0.2s;
 
         &:hover {
           color: var(--color-primary);
-          text-decoration: underline;
         }
       }
     }
 
     :deep(.no-redirect) {
       color: var(--color-text-primary);
-      cursor: text;
-      font-weight: 600;
+      cursor: default;
+      font-weight: 500;
     }
   }
 
   .right-menu {
     height: 100%;
-    line-height: $navbarHeight;
-    padding-right: 20px;
     display: flex;
     align-items: center;
 
@@ -198,7 +209,7 @@ watch(
     }
 
     .avatar-container {
-      margin-right: 0; // Removed margin, using padding in wrapper if needed
+      margin-right: 0;
 
       .avatar-wrapper {
         padding: 4px 8px;
@@ -210,25 +221,28 @@ watch(
         transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, 0.04);
+          background: var(--color-bg-spotlight);
         }
 
         .user-avatar {
-          width: 32px;
-          height: 32px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
+          object-fit: cover;
         }
 
         .user-name {
           margin-left: 8px;
           font-size: 14px;
-          color: #374151;
+          color: var(--color-text-primary);
           font-weight: 500;
+          line-height: 1;
         }
 
         .el-icon--right {
           margin-left: 4px;
-          color: #9ca3af;
+          color: var(--color-text-secondary);
+          font-size: 12px;
         }
       }
     }

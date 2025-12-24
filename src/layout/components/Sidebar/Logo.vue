@@ -43,8 +43,8 @@ const logo = ref(logoImg);
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
+  height: $sideLogoHeight;
+  line-height: $sideLogoHeight;
   background: $menuBg;
   text-align: center;
   overflow: hidden;
@@ -58,11 +58,13 @@ const logo = ref(logoImg);
   .sidebar-logo-link {
     height: 100%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .sidebar-logo {
       width: 32px;
       height: 32px;
-      vertical-align: middle;
       margin-right: 12px;
     }
 
@@ -70,11 +72,11 @@ const logo = ref(logoImg);
       display: inline-block;
       margin: 0;
       color: $menuText;
-      font-weight: 600;
-      line-height: 50px;
-      font-size: 16px;
-      vertical-align: middle;
+      font-weight: $sideLogoFontWeight;
+      line-height: normal;
+      font-size: $sideLogoFontSize;
       font-family: var(--font-family);
+      white-space: nowrap; // Prevent wrap
     }
   }
 }

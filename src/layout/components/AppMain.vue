@@ -26,7 +26,8 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
 
 .app-main {
   flex: 1;
-  width: 100%;
+  width: calc(100% - 40px);
+  margin: 0 auto;
   position: relative;
   overflow: auto;
   // padding: 20px;

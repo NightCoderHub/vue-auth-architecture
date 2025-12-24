@@ -1,23 +1,23 @@
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      'base': #0052D9,
+      'base': #165DFF,
     ),
     'success': (
-      'base': #00A870,
+      'base': #00B42A,
     ),
     'warning': (
-      'base': #ED7B2F,
+      'base': #FF7D00,
     ),
     'danger': (
-      'base': #E34D59,
+      'base': #F53F3F,
     ),
     'info': (
-      'base': #888888,
+      'base': #86909C,
     ),
   ),
   $text-color: (
-    'primary': #1F2329,
+    'primary': #1D2129,
     'regular': #4E5969,
     'secondary': #86909C,
     'placeholder': #C9CDD4,
@@ -30,7 +30,7 @@
   ),
   $fill-color: (
     'base': #F0F2F5,
-    'light': #F7F8FA,
+    'light': #FAFBFC,
     'lighter': #FAFBFC,
     'extra-light': #FFFFFF,
   ),

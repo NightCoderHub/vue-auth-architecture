@@ -7,7 +7,7 @@
  */
 :root {
   /* 1. Color System - Neutrals (Hierarchy) */
-  --color-text-primary: #1F2329;   /* Main Content */
+  --color-text-primary: #1D2129;   /* Main Content */
   --color-text-regular: #4E5969;   /* Secondary Content */
   --color-text-secondary: #86909C; /* Auxiliary/Meta info */
   --color-text-placeholder: #C9CDD4;
@@ -16,7 +16,7 @@
   --color-border: #E5E6EB;         /* Standard Border */
   --color-border-light: #F2F3F5;   /* Divider */
 
-  --color-bg-layout: #F2F3F5;      /* Page Background */
+  --color-bg-layout: #FAFBFC;      /* Page Background */
   --color-bg-container: #FFFFFF;   /* Container Background */
   --color-bg-elevated: #FFFFFF;    /* Popovers/Modals */
   --color-bg-spotlight: rgba(0, 0, 0, 0.04); /* Hover/Active states */
@@ -103,7 +103,7 @@ a {
   transition: color 0.2s;
 
   &:hover {
-    filter: brightness(1.1);
+    // filter: brightness(1.1);
   }
 }
 

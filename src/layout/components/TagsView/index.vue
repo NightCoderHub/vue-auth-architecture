@@ -9,6 +9,11 @@
         :class="isActive(tag) ? 'active' : ''"
         @click.middle="closeSelectedTag(tag)"
       >
+        <Icon
+          v-if="tag.meta && tag.meta.icon"
+          :icon="tag.meta.icon.startsWith('ep:') ? tag.meta.icon : 'ep:' + tag.meta.icon"
+          class="tag-icon"
+        />
         {{ tag.title }}
         <span v-if="!isAffix(tag)" class="close-icon" @click.prevent.stop="closeSelectedTag(tag)">
           <el-icon><Close /></el-icon>
@@ -80,80 +85,96 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 .tags-view-container {
   height: $tagsViewHeight;
   width: 100%;
-  background: var(--color-bg-container);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-1);
+  margin-bottom: 12px;
+  background: var(--color-bg-layout);
+  // border-bottom: 1px solid #dcdfe6;
+  // box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
 
   .tags-view-wrapper {
+    width: 100%;
+
     .tags-view-item {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       position: relative;
       cursor: pointer;
-      height: 28px; // Slightly taller for better click area
-      line-height: 28px;
-      border: none; // Remove border
-      border-radius: var(--border-radius-base); // Smooth rounded
-      color: var(--color-text-regular); // Medium grey
-      background: transparent;
-      padding: 0 12px;
+      height: 32px; // 4 * 8
+      line-height: 30px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      color: var(--color-text-regular);
+      background: var(--color-bg-container);
+      padding: 0 10px; // 1.5 * 8, comfortable density
       font-size: 13px;
-      margin-left: 6px;
-      margin-top: 3px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-left: 8px; // 1 * 8 grid
+      margin-top: 0;
+      transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+      user-select: none;
+
+      .tag-icon {
+        margin-right: 4px; // Visual balance (not strictly 8px but 8px is too wide here)
+        font-size: 14px;
+        vertical-align: -2px;
+      }
 
       &:hover {
-        background-color: var(--color-bg-spotlight);
-        color: var(--color-text-primary);
+        // color: var(--color-primary);
+        // border-color: var(--color-primary-light-5);
+        // background-color: var(--color-primary-light-9);
+        color: color.adjust($primary, $lightness: 5%);
+        z-index: 10; // Ensure hover state is on top
 
         .close-icon {
           opacity: 1;
-          transform: scale(1);
+          color: color.adjust($primary, $lightness: 5%);
         }
       }
 
       &:first-of-type {
-        margin-left: 16px;
+        margin-left: 20px; // Align with Navbar padding (3 * 8)
       }
 
       &:last-of-type {
-        margin-right: 16px;
+        margin-right: 20px; // Align with Navbar padding (3 * 8)
       }
 
       &.active {
-        background-color: var(--color-bg-spotlight); // Use semantic color if available or keep hardcoded for now, but spotlight is good for active/selected
-        background-color: #E6EFFF; // Hardcoded matches var(--color-primary-light-9) approximately
-        color: var(--color-primary);
+       color: color.adjust($primary, $lightness: 5%);
+        // border-color: var(--color-primary-light-5);
+        // background-color: var(--color-primary-light-9);
         font-weight: 500;
-        box-shadow: none;
 
-        &::before {
-          display: none; // Remove the dot
+        .close-icon {
+           color: color.adjust($primary, $lightness: 5%);
         }
       }
 
       .close-icon {
-        width: 14px;
-        height: 14px;
-        vertical-align: -1px;
+        width: 14px; // 2 * 8
+        height: 14px; // 2 * 8
         border-radius: 50%;
-        text-align: center;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-left: 6px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        opacity: 0; // Hidden by default
-        transform: scale(0.8);
+        margin-left: 4px; // 1 * 8 grid
+        transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+        opacity: 0.6;
+        transform: scale(0.9);
         color: var(--color-text-secondary);
+        font-size: 12px;
 
         &:hover {
-          background-color: var(--color-danger); // Light red bg
-          color: #ffffff; // Red text
+          background-color: color.adjust($primary, $lightness: 5%);
+          color: #ffffff !important;
+          transform: scale(1);
         }
       }
     }

@@ -122,7 +122,7 @@ const handleDocs = () => {
 
 .home-container {
   padding: 24px;
-  background-color: var(--el-bg-color-page);
+  background-color: $mainBg;
 
   .welcome-section {
     margin-bottom: 32px;

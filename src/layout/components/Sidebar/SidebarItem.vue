@@ -245,7 +245,6 @@ const isExternalUrl = (path: string) => {
 :deep(.el-menu-item.is-active) {
   background-color: $menuActiveBg !important;
   color: $menuActiveText !important;
-  border-right: 3px solid $primary;
 
   .el-icon {
     color: $menuActiveText !important;

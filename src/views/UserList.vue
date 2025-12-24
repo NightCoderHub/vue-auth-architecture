@@ -71,9 +71,6 @@ const tableData = ref([
 </script>
 
 <style scoped>
-.user-list-container {
-  padding: 20px;
-}
 .card-header {
   display: flex;
   justify-content: space-between;
