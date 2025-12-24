@@ -19,13 +19,24 @@ import type { ApiResponse, UserInfo } from './authTypes';
  * 7. 导航
  */
 
+
+const LOGGED_OUT_KEY = 'auth_logged_out';
+
 export async function login(username: string, password: string) {
   const authStore = useAuthStore();
   const permissionStore = usePermissionStore();
 
+  if (authStore.status === 'authenticated') {
+    console.warn('[AuthService] 用户已登录，跳过登录请求');
+    return;
+  }
+
   console.log('[AuthService] 正在登录...');
 
   try {
+    // 清除登出标记，表示用户正在尝试建立新会话
+    localStorage.removeItem(LOGGED_OUT_KEY);
+
     // 1. 登录请求
     const res = await apiClient.post<ApiResponse<{ accessToken: string }>>('/auth/login', { username, password });
     const { accessToken } = res.data.data;
@@ -82,6 +93,14 @@ let restorePromise: Promise<boolean> | null = null;
 export function restoreSession(): Promise<boolean> {
   const authStore = useAuthStore();
   const permissionStore = usePermissionStore();
+
+  // 0. 快速检查：如果用户之前明确登出过，且未再次登录，则跳过恢复尝试
+  // 这避免了在登录页刷新时调用无效的 /refresh 接口
+  if (localStorage.getItem(LOGGED_OUT_KEY) === 'true') {
+    console.log('[AuthService] 检测到明确的登出标记，跳过会话恢复。');
+    authStore.setLoggedOut();
+    return Promise.resolve(false);
+  }
 
   // 如果已有正在进行的恢复过程，直接返回该 Promise
   if (restorePromise) {
@@ -147,6 +166,9 @@ export function logout() {
   authStore.setLoggedOut();
   permissionStore.clear();
   resetRouter();
+
+  // 标记为明确登出，防止刷新页面时自动尝试 refresh
+  localStorage.setItem(LOGGED_OUT_KEY, 'true');
 
   // 3. 跳转至登录页
   router.push('/login');

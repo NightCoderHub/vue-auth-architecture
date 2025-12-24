@@ -26,6 +26,11 @@ let refreshPromise: Promise<string | null> | null = null;
 export async function ensureAuthReady(): Promise<string | null> {
   const authStore = useAuthStore();
 
+  // 0. 如果用户已明确登出，不再尝试刷新
+  if (authStore.status === 'logged_out') {
+    return null;
+  }
+
   // 1. 理想路径：已认证
   if (authStore.isAuthenticated && authStore.accessToken) {
     return authStore.accessToken;
