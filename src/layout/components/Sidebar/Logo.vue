@@ -76,7 +76,7 @@ const logo = ref(logoImg);
       line-height: normal;
       font-size: $sideLogoFontSize;
       font-family: var(--font-family);
-      white-space: nowrap; // Prevent wrap
+      white-space: nowrap;
     }
   }
 }

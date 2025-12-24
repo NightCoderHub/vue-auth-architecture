@@ -24,18 +24,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, watch, onMounted, ref } from 'vue';
+import { useRoute, useRouter, type RouteRecordRaw } from 'vue-router';
 import { useTagsViewStore, type TagView } from '@/stores/tagsView';
+import { usePermissionStore } from '@/permission/permissionStore';
 import { Close } from '@element-plus/icons-vue';
 // ScrollPane could be a simple div with overflow-x: auto for now
 import ScrollPane from './ScrollPane.vue';
+import path from 'path-browserify'; // Need to install types if missing, or use custom resolve
 
 const tagsViewStore = useTagsViewStore();
+const permissionStore = usePermissionStore();
 const route = useRoute();
 const router = useRouter();
 
-const visitedViews = computed(() => tagsViewStore.visitedViews);
+const affixTags = ref<TagView[]>([]);
+
+// 使用计算属性对 visitedViews 进行排序，确保 affix 标签始终在前面
+const visitedViews = computed(() => {
+  const views = tagsViewStore.visitedViews;
+  const affix = views.filter(tag => tag.meta?.affix);
+  const normal = views.filter(tag => !tag.meta?.affix);
+  return [...affix, ...normal];
+});
 
 const isActive = (tag: TagView) => {
   return tag.path === route.path;
@@ -45,6 +56,40 @@ const isAffix = (tag: TagView) => {
   return tag.meta && tag.meta.affix;
 };
 
+const filterAffixTags = (routes: RouteRecordRaw[], basePath = '/') => {
+  let tags: TagView[] = [];
+  routes.forEach((route) => {
+    if (route.meta && route.meta.affix) {
+      const tagPath = path.resolve(basePath, route.path);
+      tags.push({
+        fullPath: tagPath,
+        path: tagPath,
+        name: route.name,
+        meta: { ...route.meta }
+      });
+    }
+    if (route.children) {
+      const tempTags = filterAffixTags(route.children, route.path);
+      if (tempTags.length >= 1) {
+        tags = [...tags, ...tempTags];
+      }
+    }
+  });
+  return tags;
+};
+
+const initTags = () => {
+    const routes = permissionStore.menus; // 假设permissionStore拥有所有路由
+    const tags = filterAffixTags(routes);
+    affixTags.value = tags;
+    for (const tag of tags) {
+      // 必须包含标签名称
+      if (tag.name) {
+        tagsViewStore.addVisitedView(tag as any);
+      }
+    }
+  };
+
 const addTags = () => {
   if (route.name) {
     tagsViewStore.addView(route);
@@ -52,6 +97,7 @@ const addTags = () => {
 };
 
 const closeSelectedTag = (view: TagView) => {
+  if (isAffix(view)) return;
   tagsViewStore.delView(view).then(({ visitedViews }: any) => {
     if (isActive(view)) {
       toLastView(visitedViews, view);
@@ -64,8 +110,10 @@ const toLastView = (visitedViews: TagView[], view: TagView) => {
   if (latestView) {
     router.push(latestView.fullPath as string);
   } else {
-    if (view.name === 'HomeView') {
-      router.replace({ path: '/redirect' + view.fullPath });
+    // 如果没有标签了，默认重定向到首页，
+    // 但由于我们有固定标签，除非首页被关闭（这是被阻止的），否则通常不会命中这个分支。
+    if (view.name === 'Home') {
+       router.replace({ path: '/redirect' + view.fullPath });
     } else {
       router.push('/');
     }
@@ -80,6 +128,7 @@ watch(
 );
 
 onMounted(() => {
+  initTags();
   addTags();
 });
 </script>
@@ -93,10 +142,13 @@ onMounted(() => {
   width: 100%;
   margin-bottom: 12px;
   background: var(--color-bg-layout);
-  // border-bottom: 1px solid #dcdfe6;
-  // box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
+
+  // 优化：升级到合成器层，以防止布局转换时的闪烁
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
 
   .tags-view-wrapper {
     width: 100%;
@@ -112,15 +164,18 @@ onMounted(() => {
       border-radius: 4px;
       color: var(--color-text-regular);
       background: var(--color-bg-container);
-      padding: 0 10px; // 1.5 * 8, comfortable density
+      padding: 0 10px;
       font-size: 13px;
-      margin-left: 8px; // 1 * 8 grid
+      margin-left: 8px;
       margin-top: 0;
       transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
       user-select: none;
 
+      // 优化：避免在活动状态变化时触发布局抖动
+      // will-change: color, background-color, border-color;
+
       .tag-icon {
-        margin-right: 4px; // Visual balance (not strictly 8px but 8px is too wide here)
+        margin-right: 4px;
         font-size: 14px;
         vertical-align: -2px;
       }
@@ -130,7 +185,7 @@ onMounted(() => {
         // border-color: var(--color-primary-light-5);
         // background-color: var(--color-primary-light-9);
         color: color.adjust($primary, $lightness: 5%);
-        z-index: 10; // Ensure hover state is on top
+        z-index: 10;
 
         .close-icon {
           opacity: 1;
@@ -139,11 +194,11 @@ onMounted(() => {
       }
 
       &:first-of-type {
-        margin-left: 20px; // Align with Navbar padding (3 * 8)
+        margin-left: 20px;
       }
 
       &:last-of-type {
-        margin-right: 20px; // Align with Navbar padding (3 * 8)
+        margin-right: 20px;
       }
 
       &.active {
@@ -158,13 +213,13 @@ onMounted(() => {
       }
 
       .close-icon {
-        width: 14px; // 2 * 8
-        height: 14px; // 2 * 8
+        width: 14px;
+        height: 14px;
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        margin-left: 4px; // 1 * 8 grid
+        margin-left: 4px;
         transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
         opacity: 0.6;
         transform: scale(0.9);

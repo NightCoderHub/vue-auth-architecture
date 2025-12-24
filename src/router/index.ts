@@ -20,7 +20,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: 'home',
         name: 'Home',
         component: () => import('../views/HomeView.vue'),
-        meta: { title: '首页', icon: 'house', }
+        meta: { title: '首页', icon: 'house', affix: true }
       }
     ]
   },

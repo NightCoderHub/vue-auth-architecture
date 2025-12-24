@@ -241,7 +241,7 @@ const isExternalUrl = (path: string) => {
   }
 }
 
-// Active Menu Item
+
 :deep(.el-menu-item.is-active) {
   background-color: $menuActiveBg !important;
   color: $menuActiveText !important;

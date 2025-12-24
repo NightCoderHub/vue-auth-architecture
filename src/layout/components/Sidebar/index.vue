@@ -95,7 +95,7 @@ const activeMenu = computed(() => {
   .el-scrollbar {
     height: calc(100% - #{$sideLogoHeight});
 
-    // Ensure horizontal scrollbar is hidden to prevent vertical space consumption
+    // 确保隐藏水平滚动条以防止垂直空间消耗
     :deep(.el-scrollbar__wrap) {
       overflow-x: hidden;
     }
@@ -104,34 +104,34 @@ const activeMenu = computed(() => {
 
 :deep(.el-menu) {
   border: none;
-  height: auto; // Allow content to dictate height
+  height: auto; // 允许内容指定高度
   width: 100% !important;
   background-color: transparent !important;
-  padding-top: 4px; // Compensate for the removed margin-top on first item
+  padding-top: 4px; //补偿第一个项目上删除的页边空白顶部
 }
 
 :deep(.el-menu-item),
 :deep(.el-sub-menu__title) {
-  // Height calculation: content (42px) + bottom spacing (4px)
-  // Using border instead of margin prevents height calculation issues during animation
+  // 高度计算：内容（42px）+底部间距（4px）
+  // 使用边框而不是边距可以防止动画过程中的高度计算问题
   height: calc(#{$menuItemHeight} + 4px);
   line-height: $menuItemHeight;
-  margin: 0 8px; // Keep horizontal margin, remove vertical margin
-  border-bottom: 4px solid transparent; // Simulate margin-bottom
+  margin: 0 8px; // 保留水平边距，删除垂直边距
+  border-bottom: 4px solid transparent; // 模拟margin底部
     border-bottom-color:transparent !important;
-  background-clip: padding-box; // Prevent background from covering the transparent border
+  background-clip: padding-box; // 防止背景覆盖透明边框
   box-sizing: border-box;
 
-  // Fix: Compensate border-radius for the bottom border to ensure visual consistency
-  // Inner radius = Outer radius - Border width
-  // So we need: Outer radius = Desired inner radius (6px) + Border width (4px)
-  border-radius: $menuItemRadius; // Top corners default to 6px
+  // 修复：补偿底部边框的边框半径，以确保视觉一致性
+  // 内半径=外半径-边框宽度
+  // 所以我们需要：外半径=所需的内半径（6px）+边框宽度（4px）
+  border-radius: $menuItemRadius;
   border-bottom-left-radius: calc(#{$menuItemRadius} + 4px);
   border-bottom-right-radius: calc(#{$menuItemRadius} + 4px);
 
   width: auto;
   font-size: $menuItemFontSize;
-  font-weight: 500; // Medium weight
+  font-weight: 500;
   display: flex;
   align-items: center;
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -139,10 +139,10 @@ const activeMenu = computed(() => {
   &:hover {
     background-color: $menuHover !important;
     color: $menuActiveText !important;
-    // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); // Light shadow on hover
+    // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
     .el-icon {
-      color: $menuActiveText; // Icon also highlights on hover
+      color: $menuActiveText;
     }
   }
 
@@ -150,7 +150,7 @@ const activeMenu = computed(() => {
     // width: 1em;
     // height: 1em;
     margin-right: $menuIconSpacing;
-    font-size: $menuIconSize; // 18px
+    font-size: $menuIconSize;
     color: inherit;
     transition: all 0.3s;
   }
@@ -161,7 +161,7 @@ const activeMenu = computed(() => {
 }
 
 :deep(.el-sub-menu .el-menu-item) {
-  min-width: unset; // Reset Element Plus default
+  min-width: unset; //重置Element Plus默认值
 }
 
 :deep(.el-menu-item) {
@@ -175,7 +175,7 @@ const activeMenu = computed(() => {
       color: $menuActiveText;
     }
 
-    // Active Arrow
+
     .el-sub-menu__icon-arrow {
       color: $menuActiveText !important;
     }
@@ -186,21 +186,21 @@ const activeMenu = computed(() => {
   font-size: $menuArrowSize !important;
   width: $menuArrowSize;
   height: $menuArrowSize;
-  right: 0; // Fixed right distance
+  right: 0; // 固定右距离
   color: $menuArrowColor !important;
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
-// Collapse specific styles
+// 折叠特定样式
 :deep(.el-menu--collapse) {
   width: 100% !important;
 
-  // Ensure router-link (a tag) behaves as a block to fill the width
-  // This is crucial because SidebarItem wraps el-menu-item in an anchor tag
+  // 确保路由器链接（标签）作为一个块来填充宽度
+  // 这一点至关重要，因为SidebarItem将el菜单项包装在锚点标记中
   a {
     display: block;
     width: 100%;
-    // Remove default margins or padding from the link itself
+    // 删除链接本身的默认边距或填充
     margin: 0;
     padding: 0;
   }
@@ -208,20 +208,20 @@ const activeMenu = computed(() => {
   .el-menu-item,
   .el-sub-menu__title {
     padding: 0 !important;
-    margin: 0 8px; // Horizontal margin
-    border-bottom: 4px solid transparent; // Simulate margin-bottom
+    margin: 0 8px; // 水平边距保持与非折叠状态一致
+    border-bottom: 4px solid transparent; // 模拟margin-bottom
     background-clip: padding-box;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
     // width: 100%;
-    height: calc(#{$menuItemHeight} + 4px); // Ensure fixed height
-    line-height: 1; // Prevent line-height from affecting vertical alignment
+    height: calc(#{$menuItemHeight} + 4px); // 确保固定高度
+    line-height: 1; // 防止行高影响垂直对齐
 
     .el-icon {
       margin: 0 !important;
-      // Ensure icon container is perfectly centered
+      // 确保图标容器完美居中
       width: 100%;
       font-size: $menuIconSize;
       // height: 100%;
@@ -231,12 +231,12 @@ const activeMenu = computed(() => {
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      // Reset position relative to flex container
+      // 重置位置相对于flex容器
       position: static;
       transform: none;
     }
 
-    // Hide text and arrow completely
+    // 隐藏文本和箭头完全
     span,
     .el-sub-menu__icon-arrow {
       display: none !important;
@@ -249,14 +249,14 @@ const activeMenu = computed(() => {
     }
   }
 
-  // Ensure tooltips don't mess up layout if they wrap content
+  // 确保工具提示不会搞乱布局，如果它们包装内容
   > .el-menu-item {
      &.is-active {
-         // Keep active styles consistent
+         // 保持活动样式一致
      }
   }
 
-  // Fix tooltip/popover trigger area in collapse mode
+  // 修复折叠模式下工具提示/弹出窗口触发区域
   .el-sub-menu {
     &.is-active {
       > .el-sub-menu__title {

@@ -9,15 +9,13 @@
         <el-icon :size="20" class="hamburger-icon"><Expand v-if="!sidebar.opened" /><Fold v-else /></el-icon>
       </div>
       <el-breadcrumb v-if="!isBreadcrumbHidden" class="breadcrumb-container" :separator-icon="ArrowRight">
-        <transition-group name="breadcrumb">
-          <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
-            <span
-              v-if="item.redirect === 'noRedirect' || index === levelList.length - 1"
-              class="no-redirect"
-            >{{ item.meta.title }}</span>
-            <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
-          </el-breadcrumb-item>
-        </transition-group>
+        <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
+          <span
+            v-if="item.redirect === 'noRedirect' || index === levelList.length - 1"
+            class="no-redirect"
+          >{{ item.meta.title }}</span>
+          <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
+        </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
 
@@ -44,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter, type RouteLocationMatched } from 'vue-router';
 import { useAppStore } from '@/stores/app';
 import { logout as authLogout } from '@/auth/authService';
@@ -56,12 +54,12 @@ const router = useRouter();
 const appStore = useAppStore();
 
 const sidebar = computed(() => appStore.sidebar);
-const avatar = computed(() => userAvatar); // Default avatar
+const avatar = computed(() => userAvatar);
 const isBreadcrumbHidden = computed(() => route.meta.hideBreadcrumb === true);
 
-const levelList = ref<RouteLocationMatched[]>([]);
-
-const getBreadcrumb = () => {
+// 优化：使用 computed 自动追踪依赖，替代 watch + ref 手动更新
+const levelList = computed(() => {
+  // 过滤有效路由
   let matched = route.matched.filter(
     (item) => item.meta && item.meta.title && item.meta.hideBreadcrumb !== true
   );
@@ -72,15 +70,15 @@ const getBreadcrumb = () => {
     matched = [{ path: '/home', meta: { title: '首页' } } as any].concat(matched);
   }
 
-  // De-duplicate home routes: if multiple routes are identified as home, keep only the first one
+  // 删除重复的主路线：如果多条路线被标识为主路线，则只保留第一条路线
   const homeItems = matched.filter((item) => isHome(item));
   if (homeItems.length > 1) {
     const otherItems = matched.filter((item) => !isHome(item));
     matched = [homeItems[0]!, ...otherItems];
   }
 
-  levelList.value = matched;
-};
+  return matched;
+});
 
 const isHome = (route: RouteLocationMatched | undefined) => {
   if (!route) return false;
@@ -105,17 +103,9 @@ const toggleSideBar = () => {
 
 const logout = async () => {
   await authLogout();
-  // Redirect handled by authService or guard usually, but let's ensure
+  // 重定向通常由authService或guard处理，但让我们确保
   router.push(`/login?redirect=${route.fullPath}`);
 };
-
-watch(
-  () => route.path,
-  () => {
-    getBreadcrumb();
-  },
-  { immediate: true }
-);
 </script>
 
 <style lang="scss" scoped>
@@ -152,11 +142,11 @@ watch(
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s;
-    border-radius: 4px; // Soft square
+    border-radius: 4px;
     color: var(--color-text-regular);
 
     &:hover {
-      background: var(--color-bg-spotlight); // Use semantic variable
+      background: var(--color-bg-spotlight);
       color: var(--color-primary);
     }
 
@@ -168,7 +158,7 @@ watch(
   .breadcrumb-container {
     margin-left: 16px;
 
-    // Hide breadcrumb on mobile
+    // 在手机上隐藏面包屑
     @media (max-width: 768px) {
       display: none;
     }
