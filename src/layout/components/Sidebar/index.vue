@@ -172,7 +172,7 @@ const activeMenu = computed(() => {
     // box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 
     .el-icon {
-      color: $menuActiveText;
+      // color: $menuActiveText;
     }
 
 

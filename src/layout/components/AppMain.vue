@@ -30,7 +30,6 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
   margin: 0 auto;
   position: relative;
   overflow: auto;
-  // padding: 20px;
   background-color: $mainBg;
   display: flex;
   flex-direction: column;
@@ -39,7 +38,7 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
 .app-footer {
   margin-top: auto;
   text-align: center;
-  padding: 20px 0 0;
+  padding: 20px 0;
   color: $info;
   font-size: 14px;
 }

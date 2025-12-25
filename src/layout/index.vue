@@ -69,8 +69,9 @@ const handleClickOutside = () => {
   overflow: hidden;
   flex-shrink: 0;
   z-index: 1001;
-  // box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  // box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+
+  border-right: 1px solid var(--color-border);
 
   :deep(.el-scrollbar__view) {
     height: auto;
@@ -91,8 +92,8 @@ const handleClickOutside = () => {
   width: 100%;
   flex-shrink: 0;
   background: $navbarBg;
-     margin-bottom: 12px;
-  // box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+     margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   z-index: 1000;
 }
 
