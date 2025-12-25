@@ -123,12 +123,12 @@ const logout = async () => {
   height: $navbarHeight;
   overflow: hidden;
   position: relative;
-  background: var(--color-bg-layout);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  // border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   box-shadow: none;
+
   padding: 0 20px; // Design Spec: 24px horizontal padding
   transition: padding 0.3s;
 
@@ -174,12 +174,11 @@ const logout = async () => {
 
     :deep(.el-breadcrumb__inner) {
       font-size: 14px;
-
+        line-height:  calc(14px + 8px);
       a {
         color: var(--color-text-regular);
         font-weight: 400;
         transition: color 0.2s;
-
         &:hover {
           color: var(--color-primary);
         }
@@ -187,9 +186,10 @@ const logout = async () => {
     }
 
     :deep(.no-redirect) {
-      color: var(--color-text-primary);
+      // color: var(--color-text-primary);
+      color: var(--color-text-regular);
       cursor: default;
-      font-weight: 500;
+      font-weight: 400;
     }
   }
 

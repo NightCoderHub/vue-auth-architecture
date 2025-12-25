@@ -142,8 +142,6 @@ onMounted(() => {
 .tags-view-container {
   height: $tagsViewHeight;
   width: 100%;
-  margin-bottom: 12px;
-  background: var(--color-bg-layout);
   display: flex;
   align-items: center;
 
@@ -155,12 +153,18 @@ onMounted(() => {
   .tags-view-wrapper {
     width: 100%;
 
+    :deep(.el-scrollbar__view) {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
     .tags-view-item {
       display: inline-flex;
       align-items: center;
       position: relative;
       cursor: pointer;
-      height: 32px; // 4 * 8
+      height: 30px;
       line-height: 30px;
       border: 1px solid var(--color-border);
       border-radius: 4px;

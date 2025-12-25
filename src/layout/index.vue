@@ -91,6 +91,7 @@ const handleClickOutside = () => {
   width: 100%;
   flex-shrink: 0;
   background: $navbarBg;
+     margin-bottom: 12px;
   // box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   z-index: 1000;
 }

@@ -5,7 +5,7 @@ $subMenuActiveText: #165DFF; // Primary Blue
 
 $menuBg: #FFFFFF;
 $menuHover: rgba(0, 0, 0, 0.04); // Subtle hover
-$menuActiveBg: #E8F3FF; // Light primary background
+$menuActiveBg: rgba(0, 0, 0, 0.04);; // Light primary background
 
 $subMenuBg: #FFFFFF;
 $subMenuHover: rgba(0, 0, 0, 0.04);
@@ -29,19 +29,19 @@ $sideBarWidth: 230px;
 $sideBarWidthCollapsed: 74px;
 
 // Navbar
-$navbarHeight: 60px;
-$navbarBg: #FAFBFC;
+$navbarHeight: 48px;
+$navbarBg: #ffffff;
 $navbarShadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
 
 // SideLogo
 $sideLogoHeight: 60px;
 
 // TagsView
-$tagsViewHeight: 34px;
+$tagsViewHeight: 40px;
 $tagsViewBg: #FFFFFF;
 
 // Main Content
-$mainBg: #FAFBFC; // Matches --color-bg-layout
+$mainBg: #f2f3f5; // Matches --color-bg-layout
 
 // Colors
 $primary: #165DFF;
