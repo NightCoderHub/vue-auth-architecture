@@ -66,17 +66,23 @@ defineOptions({
  * Props 定义
  */
 const props = defineProps({
-  // 要渲染的路由对象
+  /**
+   * 要渲染的路由对象
+   */
   item: {
     type: Object as PropType<RouteRecordRaw>,
     required: true,
   },
-  // 该项是否嵌套在另一个子菜单中
+  /**
+   * 该项是否嵌套在另一个子菜单中
+   */
   isNest: {
     type: Boolean,
     default: false,
   },
-  // 用于解析相对路径的基础路径
+  /**
+   * 用于解析相对路径的基础路径
+   */
   basePath: {
     type: String,
     default: '',
