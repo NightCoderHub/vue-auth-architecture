@@ -191,12 +191,12 @@ async function handlePermissionUpdate(newPermissions?: string[], newMenus?: Menu
     // 如果未提供数据（例如手动刷新场景），则从 API 获取
     if (!permissions || !menus) {
       console.log('[PermissionChannel] 正在从 API 获取新权限...');
-      const [permRes, menuRes] = await Promise.all([
-        apiClient.get<ApiResponse<string[]>>('/user/permissions'),
-        apiClient.get<ApiResponse<MenuItem[]>>('/user/menus')
+      const [fetchedPermissions, fetchedMenus] = await Promise.all([
+        apiClient.get<string[]>('/user/permissions'),
+        apiClient.get<MenuItem[]>('/user/menus')
       ]);
-      permissions = permRes.data.data;
-      menus = menuRes.data.data;
+      permissions = fetchedPermissions;
+      menus = fetchedMenus;
     } else {
       console.log('[PermissionChannel] 使用推送数据更新权限...');
     }

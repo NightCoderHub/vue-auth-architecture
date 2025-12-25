@@ -5,7 +5,7 @@ import { resetRouter, initDynamicRoutes } from '../permission/routeBuilder';
 import { closePermissionChannel, initPermissionChannel } from '../permission/permissionChannel';
 import { ensureAuthReady } from './refresh';
 import router from '../router';
-import type { ApiResponse, UserInfo } from './authTypes';
+import type { UserInfo } from './authTypes';
 
 /**
  * 认证业务逻辑
@@ -38,8 +38,8 @@ export async function login(username: string, password: string) {
     localStorage.removeItem(LOGGED_OUT_KEY);
 
     // 1. 登录请求
-    const res = await apiClient.post<ApiResponse<{ accessToken: string }>>('/auth/login', { username, password });
-    const { accessToken } = res.data.data;
+    const res = await apiClient.post<{ accessToken: string }>('/auth/login', { username, password });
+    const { accessToken } = res;
 
     // 2. 更新 Store (认证)
     // 必须先设置 Token，否则后续的 API 请求无法通过拦截器的鉴权
@@ -49,12 +49,12 @@ export async function login(username: string, password: string) {
 
     // 3. 并行获取个人资料、权限
     const [userRes, permRes] = await Promise.all([
-      apiClient.get<ApiResponse<UserInfo>>('/user/profile'),
-      apiClient.get<ApiResponse<string[]>>('/user/permissions')
+      apiClient.get<UserInfo>('/user/profile'),
+      apiClient.get<string[]>('/user/permissions')
     ]);
 
-    const user = userRes.data.data;
-    const permissions = permRes.data.data;
+    const user = userRes;
+    const permissions = permRes;
 
     // 4. 更新 Stores
     authStore.setUserInfo(user);
@@ -117,13 +117,10 @@ export function restoreSession(): Promise<boolean> {
       console.log('[AuthService] Token 已恢复。正在获取个人资料和权限...');
 
       // 2. 并行获取个人资料、权限
-      const [userRes, permRes] = await Promise.all([
-        apiClient.get<ApiResponse<UserInfo>>('/user/profile'),
-        apiClient.get<ApiResponse<string[]>>('/user/permissions')
+      const [user, permissions] = await Promise.all([
+        apiClient.get<UserInfo>('/user/profile'),
+        apiClient.get<string[]>('/user/permissions')
       ]);
-
-      const user = userRes.data.data;
-      const permissions = permRes.data.data;
 
       // 3. 更新 Stores
       authStore.setUserInfo(user);

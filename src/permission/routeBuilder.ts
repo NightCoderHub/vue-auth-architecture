@@ -2,7 +2,7 @@ import router from '../router';
 import { type RouteRecordRaw } from 'vue-router';
 
 import { usePermissionStore } from './permissionStore';
-import type { MenuItem, ApiResponse } from '../auth/authTypes';
+import type { MenuItem } from '../auth/authTypes';
 import Layout from '@/layout/index.vue';
 import apiClient from '../axios';
 import { normalizePath } from '../utils/path-governance';
@@ -31,11 +31,11 @@ export function resetRouter() {
  */
 export async function initDynamicRoutes() {
   try {
-    const { data } = await apiClient.get<ApiResponse<MenuItem[]>>('/user/menus');
-    if (data.code === 200 && data.data) {
-      buildRoutes(data.data);
+    const menus = await apiClient.get<MenuItem[]>('/user/menus');
+    if (menus) {
+      buildRoutes(menus);
     } else {
-      console.warn('[RouteBuilder] 获取菜单数据失败:', data.message);
+      console.warn('[RouteBuilder] 获取菜单数据失败');
       // Fallback: build empty routes or handle error
       buildRoutes([]);
     }
