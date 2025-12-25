@@ -13,5 +13,11 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     css: false, // 禁用 CSS 处理以避免 SCSS 错误
+    coverage: {
+        provider: 'istanbul',
+        reporter: ['text', 'json', 'html'],
+        include: ['src/axios/index.ts'],
+        exclude: ['src/axios/__tests__/**']
+      }
   },
 });
