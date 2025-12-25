@@ -16,7 +16,7 @@
         />
         {{ tag.title }}
         <span v-if="!isAffix(tag)" class="close-icon" @click.prevent.stop="closeSelectedTag(tag)">
-          <Icon icon="ep:close" />
+          <Icon icon="icon-park-outline:close" />
         </span>
       </router-link>
     </scroll-pane>

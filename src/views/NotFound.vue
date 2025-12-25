@@ -2,7 +2,7 @@
   <div class="not-found-container">
     <div class="content">
       <div class="icon-wrapper">
-        <Icon icon="ep:warning" class="warning-icon" width="100" height="100" />
+        <Icon icon="icon-park-outline:attention" class="warning-icon" width="100" height="100" />
       </div>
       <h1 class="error-code">404</h1>
       <h2 class="error-title">页面未找到</h2>
@@ -10,10 +10,10 @@
 
       <div class="actions">
         <el-button type="primary" size="large" @click="$router.push('/')">
-           <Icon icon="ep:home-filled" /> 返回首页
+           <Icon icon="icon-park-outline:home" /> 返回首页
         </el-button>
         <el-button size="large" @click="$router.back()"  >
-          <Icon icon="ep:back" />  返回上一页
+          <Icon icon="icon-park-outline:left" />  返回上一页
         </el-button>
       </div>
     </div>

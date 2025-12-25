@@ -7,7 +7,7 @@
         <p class="welcome-subtitle">
           系统运行正常 | 安全等级: <span class="security-level">高</span> |
           <span class="status-item">
-            <Icon icon="ep:connection" class="status-icon" :class="wsStatus === 'connected' ? 'connected' : 'disconnected'" />
+            <Icon icon="icon-park-outline:connection" class="status-icon" :class="wsStatus === 'connected' ? 'connected' : 'disconnected'" />
             实时连接: {{ wsStatus === 'connected' ? '在线' : '离线' }}
           </span>
         </p>
@@ -35,7 +35,7 @@
               <span class="unit" v-if="metric.unit">{{ metric.unit }}</span>
             </div>
             <div class="metric-trend" :class="metric.trend > 0 ? 'up' : 'down'">
-              <Icon :icon="metric.trend > 0 ? 'ep:top' : 'ep:bottom'" />
+              <Icon :icon="metric.trend > 0 ? 'icon-park-outline:arrow-up' : 'icon-park-outline:arrow-down'" />
               {{ Math.abs(metric.trend) }}% 较昨日
             </div>
           </div>
@@ -51,7 +51,7 @@
           <template #header>
             <div class="card-header">
               <span class="title-with-icon">
-                <Icon icon="ep:cpu" class="text-primary" /> 智能诊断与建议
+                <Icon icon="icon-park-outline:cpu" class="text-primary" /> 智能诊断与建议
               </span>
               <el-tag size="small" effect="plain">AI 引擎运行中</el-tag>
             </div>
@@ -75,7 +75,7 @@
           <template #header>
             <div class="card-header">
               <span class="title-with-icon">
-                <Icon icon="ep:key" class="text-warning" /> 权限验证沙箱
+                <Icon icon="icon-park-outline:key" class="text-warning" /> 权限验证沙箱
               </span>
             </div>
           </template>
@@ -132,25 +132,25 @@
           <template #header>
             <div class="card-header">
               <span class="title-with-icon">
-                <Icon icon="ep:tools" /> 开发者诊断
+                <Icon icon="icon-park-outline:tool" /> 开发者诊断
               </span>
             </div>
           </template>
           <div class="tool-actions">
              <el-button class="tool-btn" @click="testConcurrency">
-               <Icon icon="ep:timer" />
+               <Icon icon="icon-park-outline:time" />
                <span>并发测试</span>
              </el-button>
              <el-button class="tool-btn" @click="updateRolePermissions">
-               <Icon icon="ep:refresh" />
+               <Icon icon="icon-park-outline:refresh" />
                <span>变更权限</span>
              </el-button>
              <el-button class="tool-btn" @click="assignRoleMenus">
-               <Icon icon="ep:menu" />
+               <Icon icon="icon-park-outline:menu-fold" />
                <span>分配菜单</span>
              </el-button>
              <el-button class="tool-btn danger" @click="handleLogout">
-               <Icon icon="ep:switch-button" />
+               <Icon icon="icon-park-outline:switch-button" />
                <span>安全注销</span>
              </el-button>
           </div>
@@ -159,7 +159,7 @@
           <div class="mini-console" v-if="logs.length">
              <div class="console-header">
                <span>控制台输出</span>
-               <Icon icon="ep:delete" class="clear-btn" @click="logs = []" />
+               <Icon icon="icon-park-outline:delete" class="clear-btn" @click="logs = []" />
              </div>
              <div class="console-body">
                <div v-for="(log, i) in logs" :key="i" class="log-line">
@@ -195,15 +195,15 @@ const logs = ref<string[]>([]);
 
 // --- Mock Data for UI Beautification ---
 const metrics = ref([
-  { label: '系统负载', value: '24', unit: '%', trend: -12, icon: 'ep:cpu', type: 'primary' },
-  { label: '活跃会话', value: '1,284', unit: '', trend: 5.4, icon: 'ep:monitor', type: 'success' },
-  { label: 'API 延迟', value: '45', unit: 'ms', trend: -2.1, icon: 'ep:trend-charts', type: 'warning' },
-  { label: '安全拦截', value: '3', unit: '次', trend: 0, icon: 'ep:eleme', type: 'danger' }
+  { label: '系统负载', value: '24', unit: '%', trend: -12, icon: 'icon-park-outline:cpu', type: 'primary' },
+  { label: '活跃会话', value: '1,284', unit: '', trend: 5.4, icon: 'icon-park-outline:monitor', type: 'success' },
+  { label: 'API 延迟', value: '45', unit: 'ms', trend: -2.1, icon: 'icon-park-outline:chart-line', type: 'warning' },
+  { label: '安全拦截', value: '3', unit: '次', trend: 0, icon: 'icon-park-outline:protect', type: 'danger' }
 ]);
 
 const suggestions = ref([
-  { id: 1, title: 'Token 刷新策略优化', desc: '检测到频繁的 Token 刷新请求，建议检查客户端时钟同步。', type: 'warning', icon: 'ep:warning' },
-  { id: 2, title: '权限配置安全', desc: '所有角色权限配置符合最小权限原则。', type: 'success', icon: 'ep:circle-check' }
+  { id: 1, title: 'Token 刷新策略优化', desc: '检测到频繁的 Token 刷新请求，建议检查客户端时钟同步。', type: 'warning', icon: 'icon-park-outline:attention' },
+  { id: 2, title: '权限配置安全', desc: '所有角色权限配置符合最小权限原则。', type: 'success', icon: 'icon-park-outline:check-one' }
 ]);
 
 const timeGreeting = computed(() => {
@@ -412,7 +412,7 @@ const updateRolePermissions = async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   .title-with-icon {
     display: flex;
     align-items: center;

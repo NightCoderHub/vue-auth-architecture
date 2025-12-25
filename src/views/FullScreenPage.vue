@@ -6,7 +6,7 @@
       <p>适用于数据大屏、独立工作台等场景。</p>
       
       <div class="info-block">
-        <Icon icon="ep:full-screen" class="icon" />
+        <Icon icon="icon-park-outline:full-screen" class="icon" />
         <span>当前状态：全屏模式</span>
       </div>
 

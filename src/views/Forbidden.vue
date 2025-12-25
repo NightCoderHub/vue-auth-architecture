@@ -2,7 +2,7 @@
   <div class="forbidden-container">
     <div class="content">
       <div class="icon-wrapper">
-        <Icon icon="ep:lock" class="lock-icon" width="100" height="100" />
+        <Icon icon="icon-park-outline:lock" class="lock-icon" width="100" height="100" />
       </div>
       <h1 class="error-code">403</h1>
       <h2 class="error-title">访问被拒绝</h2>
@@ -10,11 +10,11 @@
 
       <div class="actions">
         <el-button type="primary" size="large" @click="$router.push('/')" >
-          <Icon icon="ep:home-filled" />
+          <Icon icon="icon-park-outline:home" />
           返回首页
         </el-button>
         <el-button size="large" @click="$router.push('/login')">
-          <Icon icon="ep:user" />
+          <Icon icon="icon-park-outline:user" />
           重新登录
         </el-button>
       </div>

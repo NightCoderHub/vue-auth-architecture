@@ -6,12 +6,18 @@ import './router/guard' // 激活路由守卫
 import { bootstrap } from './bootstrap'
 import { setupDirectives } from './directives'
 import './styles/main.scss'
-import { Icon, addCollection } from '@iconify/vue'
-// 直接引入下载好的 Element Plus 图标 JSON 数据
-import epIcons from '@iconify-json/ep/icons.json'
+import { Icon, addIcon } from '@iconify/vue'
+import { registerIcons } from './icons/bundled'
 
-// 关键步骤：将整个图标集注册到本地缓存
-addCollection(epIcons)
+// 注册离线图标
+registerIcons()
+
+// 自定义图标：汉堡菜单线性图标
+addIcon('hamburger-menu-linear', {
+	"width": 24,
+	"height": 24,
+	"body": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-width=\"2\" d=\"M20 7H4m16 5H4m16 5H4\"/>"
+})
 
 const app = createApp(App)
 

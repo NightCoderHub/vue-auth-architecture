@@ -6,8 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import Icons from 'unplugin-icons/vite'
-import IconsResolver from 'unplugin-icons/resolver'
+import viteCompression from 'vite-plugin-compression'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -18,10 +17,6 @@ export default defineConfig({
     AutoImport({
       resolvers: [
         ElementPlusResolver(),
-        // 配置前缀，例如使用 <i-ep-edit />
-        IconsResolver({
-          prefix: 'Icon',
-        }),
       ],
       imports: ['vue', 'vue-router', 'pinia'],
       dts: 'src/auto-imports.d.ts',
@@ -31,16 +26,16 @@ export default defineConfig({
         ElementPlusResolver({
           importStyle: 'sass',
         }),
-        IconsResolver({
-          enabledCollections: ['ep'],
-        }),
       ],
       dts: 'src/components.d.ts',
     }),
-    // 自动安装并使用本地图标集
-    Icons({
-      autoInstall: false, // 已经手动下载了 @iconify-json/ep，设为 false
-       compiler: 'vue3',
+    // 开启 gzip 压缩
+    viteCompression({
+      verbose: true,
+      disable: false,
+      threshold: 10240,
+      algorithm: 'gzip',
+      ext: '.gz',
     }),
   ],
   css: {
@@ -65,10 +60,6 @@ export default defineConfig({
             // 独立打包 Element Plus
             if (id.includes('element-plus')) {
               return 'element-plus';
-            }
-            // 独立打包 Icons
-            if (id.includes('@iconify-json') || id.includes('@iconify')) {
-              return 'icons';
             }
             // 其他依赖打入 vendor
             return 'vendor';

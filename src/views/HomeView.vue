@@ -81,20 +81,20 @@
       <div class="quick-links">
         <el-button type="primary" plain @click="$router.push('/dashboard')">
           <el-icon>
-            <Icon icon="ep:odometer" />
+            <Icon icon="icon-park-outline:dashboard" />
           </el-icon>
           <span>控制台</span>
         </el-button>
         <el-button type="success" plain @click="$router.push('/user/profile')">
-          <el-icon><Icon icon="ep:user" /> </el-icon>
+          <el-icon><Icon icon="icon-park-outline:user" /> </el-icon>
           <span>个人中心</span>
         </el-button>
         <el-button type="warning" plain @click="$router.push('/system/settings')">
-          <el-icon><Icon icon="ep:setting" /> </el-icon>
+          <el-icon><Icon icon="icon-park-outline:setting-two" /> </el-icon>
           <span>系统设置</span>
         </el-button>
         <el-button type="info" plain @click="handleDocs">
-          <el-icon><Icon icon="ep:document" /> </el-icon>
+          <el-icon><Icon icon="icon-park-outline:file-text" /> </el-icon>
           <span>查看文档</span>
         </el-button>
       </div>

@@ -7,7 +7,7 @@
         @click="toggleSideBar"
       >
         <el-icon :size="20" class="hamburger-icon">
-          <Icon :icon="sidebar.opened ? 'ep:fold' : 'ep:expand'" />
+          <Icon icon="hamburger-menu-linear" />
         </el-icon>
       </div>
       <el-breadcrumb v-if="!isBreadcrumbHidden" class="breadcrumb-container" :separator-icon="ArrowRight">
@@ -26,7 +26,7 @@
         <div class="avatar-wrapper">
           <img :src="avatar" class="user-avatar" />
           <span class="user-name">Admin</span>
-          <Icon icon="ep:caret-bottom" class="el-icon--right" />
+          <Icon icon="icon-park-outline:down" class="el-icon--right" />
         </div>
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
@@ -55,7 +55,7 @@ import { logout as authLogout } from '@/auth/authService';
 import userAvatar from '@/assets/vue.svg';
 
 import { Icon } from '@iconify/vue';
-const ArrowRight = () => <Icon icon="ep:arrow-right" />;
+const ArrowRight = () => <Icon icon="icon-park-outline:right" />;
 
 const route = useRoute();
 const router = useRouter();

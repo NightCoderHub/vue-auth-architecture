@@ -3,7 +3,7 @@
     <div class="login-content">
       <div class="login-header">
         <div class="logo-circle">
-          <Icon icon="ep:lock" class="logo-icon" />
+          <Icon icon="icon-park-outline:lock" class="logo-icon" />
         </div>
         <h2 class="title">Vue 前端鉴权架构</h2>
         <p class="subtitle">企业级中后台权限管理系统方案</p>
@@ -24,7 +24,7 @@
               placeholder="请输入用户名"
             >
               <template #prefix>
-                <Icon icon="ep:user" />
+                <Icon icon="icon-park-outline:user" />
               </template>
             </el-input>
           </el-form-item>
@@ -37,7 +37,7 @@
               show-password
             >
               <template #prefix>
-                <Icon icon="ep:lock" />
+                <Icon icon="icon-park-outline:lock" />
               </template>
             </el-input>
           </el-form-item>
