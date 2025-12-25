@@ -6,6 +6,8 @@ import './router/guard' // 激活路由守卫
 import { bootstrap } from './bootstrap'
 import { setupDirectives } from './directives'
 import './styles/main.scss'
+import 'element-plus/es/components/message/style/css'
+import 'element-plus/es/components/message-box/style/css'
 import { Icon, addIcon } from '@iconify/vue'
 import { registerIcons } from './icons/bundled'
 
