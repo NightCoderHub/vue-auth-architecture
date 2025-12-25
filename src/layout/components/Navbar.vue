@@ -10,10 +10,7 @@
           <Icon :icon="sidebar.opened ? 'ep:fold' : 'ep:expand'" />
         </el-icon>
       </div>
-      <el-breadcrumb v-if="!isBreadcrumbHidden" class="breadcrumb-container">
-        <template #separator>
-          <Icon icon="ep:arrow-right" />
-        </template>
+      <el-breadcrumb v-if="!isBreadcrumbHidden" class="breadcrumb-container" :separator-icon="ArrowRight">
         <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
           <span
             v-if="item.redirect === 'noRedirect' || index === levelList.length - 1"
@@ -46,7 +43,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 /**
  * @description: 顶部导航栏组件
  * 包含汉堡按钮、面包屑导航和用户头像下拉菜单
@@ -56,6 +53,9 @@ import { useRoute, useRouter, type RouteLocationMatched } from 'vue-router';
 import { useAppStore } from '@/stores/app';
 import { logout as authLogout } from '@/auth/authService';
 import userAvatar from '@/assets/vue.svg';
+
+import { Icon } from '@iconify/vue';
+const ArrowRight = () => <Icon icon="ep:arrow-right" />;
 
 const route = useRoute();
 const router = useRouter();
@@ -132,9 +132,6 @@ const logout = async () => {
   padding: 0 20px; // Design Spec: 24px horizontal padding
   transition: padding 0.3s;
 
-  @media (max-width: 768px) {
-    padding: 0 16px; // Mobile: 16px padding
-  }
 
   .left-menu {
     display: flex;
