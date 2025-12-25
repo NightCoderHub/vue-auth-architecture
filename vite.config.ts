@@ -7,6 +7,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import viteCompression from 'vite-plugin-compression'
+import { viteMockServe } from 'vite-plugin-mock'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,6 +15,10 @@ export default defineConfig({
     vue(),
     vueJsx(),
     vueDevTools(),
+    viteMockServe({
+      mockPath: 'mock',
+      enable: true,
+    }),
     AutoImport({
       resolvers: [
         ElementPlusResolver(),
