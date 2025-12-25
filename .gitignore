@@ -28,3 +28,6 @@ dist-ssr
 
 # Ignore all test directories
 __tests__/
+
+#coverage
+coverage/
