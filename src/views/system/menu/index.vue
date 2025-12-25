@@ -28,10 +28,8 @@ const menuDialogRef = ref<InstanceType<typeof MenuDialog>>();
 const fetchList = async () => {
   loading.value = true;
   try {
-    const { data } = await getMenuList(queryParams.value);
-    if (data.code === 200 && data.data) {
-      tableData.value = data.data;
-    }
+    const data = await getMenuList(queryParams.value);
+    tableData.value = data;
   } catch (error) {
     console.error(error);
   } finally {
