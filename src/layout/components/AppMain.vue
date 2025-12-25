@@ -29,10 +29,20 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
   width: calc(100% - 40px);
   margin: 0 auto;
   position: relative;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: $mainBg;
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 576px) {
+  .app-main {
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
 }
 
 .app-footer {
