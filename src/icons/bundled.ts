@@ -28,6 +28,13 @@ import deleteIcon from '@iconify-icons/icon-park-outline/delete';
 import refresh from '@iconify-icons/icon-park-outline/refresh';
 import time from '@iconify-icons/icon-park-outline/time';
 import tool from '@iconify-icons/icon-park-outline/tool';
+import list from '@iconify-icons/icon-park-outline/list';
+import plus from '@iconify-icons/icon-park-outline/plus';
+import search from '@iconify-icons/icon-park-outline/search';
+import fileExcel from '@iconify-icons/icon-park-outline/file-excel';
+import drag from '@iconify-icons/icon-park-outline/drag';
+import edit from '@iconify-icons/icon-park-outline/edit';
+import closeOne from '@iconify-icons/icon-park-outline/close-one';
 
 // 仪表盘特定
 import arrowUp from '@iconify-icons/icon-park-outline/arrow-up';
@@ -64,6 +71,13 @@ const icons = {
   'refresh': refresh,
   'time': time,
   'tool': tool,
+  'list': list,
+  'plus': plus,
+  'search': search,
+  'file-excel': fileExcel,
+  'drag': drag,
+  'edit': edit,
+  'close-one': closeOne,
   'arrow-up': arrowUp,
   'arrow-down': arrowDown,
   'cpu': cpu,
