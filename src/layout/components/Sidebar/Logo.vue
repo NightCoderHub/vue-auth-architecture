@@ -14,15 +14,17 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 侧边栏 Logo 组件
+ * 包含应用标题和 logo 图片
+ */
 import { ref } from 'vue';
 import logoImg from '@/assets/vue.svg';
 
-defineProps({
-  collapse: {
-    type: Boolean,
-    required: true,
-  },
-});
+defineProps<{
+  /** 是否折叠 */
+  collapse: boolean
+}>();
 
 const title = ref('Vue Admin');
 const logo = ref(logoImg);

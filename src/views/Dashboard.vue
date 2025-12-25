@@ -7,7 +7,7 @@
         <p class="welcome-subtitle">
           系统运行正常 | 安全等级: <span class="security-level">高</span> |
           <span class="status-item">
-            <el-icon class="status-icon" :class="wsStatus === 'connected' ? 'connected' : 'disconnected'"><Connection /></el-icon>
+            <Icon icon="ep:connection" class="status-icon" :class="wsStatus === 'connected' ? 'connected' : 'disconnected'" />
             实时连接: {{ wsStatus === 'connected' ? '在线' : '离线' }}
           </span>
         </p>
@@ -26,7 +26,7 @@
       <el-col :xs="24" :sm="12" :md="6" v-for="(metric, index) in metrics" :key="index">
         <el-card shadow="hover" class="metric-card">
           <div class="metric-icon" :class="metric.type">
-            <el-icon><component :is="metric.icon" /></el-icon>
+            <Icon :icon="metric.icon" />
           </div>
           <div class="metric-info">
             <div class="metric-label">{{ metric.label }}</div>
@@ -35,7 +35,7 @@
               <span class="unit" v-if="metric.unit">{{ metric.unit }}</span>
             </div>
             <div class="metric-trend" :class="metric.trend > 0 ? 'up' : 'down'">
-              <el-icon><component :is="metric.trend > 0 ? 'Top' : 'Bottom'" /></el-icon>
+              <Icon :icon="metric.trend > 0 ? 'ep:top' : 'ep:bottom'" />
               {{ Math.abs(metric.trend) }}% 较昨日
             </div>
           </div>
@@ -51,7 +51,7 @@
           <template #header>
             <div class="card-header">
               <span class="title-with-icon">
-                <el-icon class="text-primary"><Cpu /></el-icon> 智能诊断与建议
+                <Icon icon="ep:cpu" class="text-primary" /> 智能诊断与建议
               </span>
               <el-tag size="small" effect="plain">AI 引擎运行中</el-tag>
             </div>
@@ -59,7 +59,7 @@
           <div class="suggestions-list">
             <div class="suggestion-item" v-for="item in suggestions" :key="item.id">
               <div class="suggestion-icon" :class="item.type">
-                <el-icon><component :is="item.icon" /></el-icon>
+                <Icon :icon="item.icon" />
               </div>
               <div class="suggestion-content">
                 <h4>{{ item.title }}</h4>
@@ -75,7 +75,7 @@
           <template #header>
             <div class="card-header">
               <span class="title-with-icon">
-                <el-icon class="text-warning"><Key /></el-icon> 权限验证沙箱
+                <Icon icon="ep:key" class="text-warning" /> 权限验证沙箱
               </span>
             </div>
           </template>
@@ -132,25 +132,25 @@
           <template #header>
             <div class="card-header">
               <span class="title-with-icon">
-                <el-icon><Tools /></el-icon> 开发者诊断
+                <Icon icon="ep:tools" /> 开发者诊断
               </span>
             </div>
           </template>
           <div class="tool-actions">
              <el-button class="tool-btn" @click="testConcurrency">
-               <el-icon><Timer /></el-icon>
+               <Icon icon="ep:timer" />
                <span>并发测试</span>
              </el-button>
              <el-button class="tool-btn" @click="updateRolePermissions">
-               <el-icon><Refresh /></el-icon>
+               <Icon icon="ep:refresh" />
                <span>变更权限</span>
              </el-button>
              <el-button class="tool-btn" @click="assignRoleMenus">
-               <el-icon><Menu /></el-icon>
+               <Icon icon="ep:menu" />
                <span>分配菜单</span>
              </el-button>
              <el-button class="tool-btn danger" @click="handleLogout">
-               <el-icon><SwitchButton /></el-icon>
+               <Icon icon="ep:switch-button" />
                <span>安全注销</span>
              </el-button>
           </div>
@@ -159,7 +159,7 @@
           <div class="mini-console" v-if="logs.length">
              <div class="console-header">
                <span>控制台输出</span>
-               <el-icon class="clear-btn" @click="logs = []"><Delete /></el-icon>
+               <Icon icon="ep:delete" class="clear-btn" @click="logs = []" />
              </div>
              <div class="console-body">
                <div v-for="(log, i) in logs" :key="i" class="log-line">
@@ -176,16 +176,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 仪表盘组件
+ * 展示系统核心指标、快捷操作入口及开发者诊断工具
+ */
 import { computed, ref, watch } from 'vue';
 import { useAuthStore } from '../auth/authStore';
 import { logout } from '../auth/authService';
 import Permission from '../components/Permission.vue';
 import apiClient from '../axios';
 import { wsStatus, closePermissionChannel } from '../permission/permissionChannel';
-import {
-  Connection, Key, Cpu,
-  Timer, Refresh, SwitchButton, Tools, Delete,Menu
-} from '@element-plus/icons-vue';
 
 // --- Stores & State ---
 const authStore = useAuthStore();
@@ -195,15 +195,15 @@ const logs = ref<string[]>([]);
 
 // --- Mock Data for UI Beautification ---
 const metrics = ref([
-  { label: '系统负载', value: '24', unit: '%', trend: -12, icon: 'Cpu', type: 'primary' },
-  { label: '活跃会话', value: '1,284', unit: '', trend: 5.4, icon: 'Monitor', type: 'success' },
-  { label: 'API 延迟', value: '45', unit: 'ms', trend: -2.1, icon: 'TrendCharts', type: 'warning' },
-  { label: '安全拦截', value: '3', unit: '次', trend: 0, icon: 'Eleme', type: 'danger' }
+  { label: '系统负载', value: '24', unit: '%', trend: -12, icon: 'ep:cpu', type: 'primary' },
+  { label: '活跃会话', value: '1,284', unit: '', trend: 5.4, icon: 'ep:monitor', type: 'success' },
+  { label: 'API 延迟', value: '45', unit: 'ms', trend: -2.1, icon: 'ep:trend-charts', type: 'warning' },
+  { label: '安全拦截', value: '3', unit: '次', trend: 0, icon: 'ep:eleme', type: 'danger' }
 ]);
 
 const suggestions = ref([
-  { id: 1, title: 'Token 刷新策略优化', desc: '检测到频繁的 Token 刷新请求，建议检查客户端时钟同步。', type: 'warning', icon: 'Warning' },
-  { id: 2, title: '权限配置安全', desc: '所有角色权限配置符合最小权限原则。', type: 'success', icon: 'CircleCheck' }
+  { id: 1, title: 'Token 刷新策略优化', desc: '检测到频繁的 Token 刷新请求，建议检查客户端时钟同步。', type: 'warning', icon: 'ep:warning' },
+  { id: 2, title: '权限配置安全', desc: '所有角色权限配置符合最小权限原则。', type: 'success', icon: 'ep:circle-check' }
 ]);
 
 const timeGreeting = computed(() => {
@@ -405,14 +405,14 @@ const updateRolePermissions = async () => {
 
   :deep(.el-card__body) {
       padding: 24px;
-  }
+    }
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+  
   .title-with-icon {
     display: flex;
     align-items: center;

@@ -5,6 +5,10 @@ import { useAppStore } from '@/stores/app';
 const { body } = document;
 const WIDTH = 992; // Bootstrap md breakpoint
 
+/**
+ * 响应式布局处理 Hook
+ * 自动根据窗口大小切换移动端/桌面端模式
+ */
 export default function useResizeHandler() {
   const appStore = useAppStore();
   const route = useRoute();

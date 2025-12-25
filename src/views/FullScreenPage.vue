@@ -6,7 +6,7 @@
       <p>适用于数据大屏、独立工作台等场景。</p>
       
       <div class="info-block">
-        <el-icon class="icon"><FullScreen /></el-icon>
+        <Icon icon="ep:full-screen" class="icon" />
         <span>当前状态：全屏模式</span>
       </div>
 
@@ -16,7 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { FullScreen } from '@element-plus/icons-vue'
+/**
+ * @description: 全屏页面演示组件
+ */
 </script>
 
 <style scoped>

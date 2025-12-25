@@ -3,10 +3,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 权限控制组件
+ * 根据用户权限代码控制插槽内容的显示与隐藏
+ */
 import { computed } from 'vue';
 import { usePermissionStore } from '../permission/permissionStore';
 
 const props = defineProps<{
+  /** 权限代码，如 'user:add' */
   code: string
 }>();
 

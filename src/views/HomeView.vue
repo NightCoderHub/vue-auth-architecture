@@ -80,16 +80,22 @@
       <el-divider content-position="left">快捷导航</el-divider>
       <div class="quick-links">
         <el-button type="primary" plain @click="$router.push('/dashboard')">
-          <el-icon><Odometer /></el-icon> 控制台
+          <el-icon>
+            <Icon icon="ep:odometer" />
+          </el-icon>
+          <span>控制台</span>
         </el-button>
         <el-button type="success" plain @click="$router.push('/user/profile')">
-          <el-icon><User /></el-icon> 个人中心
+          <el-icon><Icon icon="ep:user" /> </el-icon>
+          <span>个人中心</span>
         </el-button>
         <el-button type="warning" plain @click="$router.push('/system/settings')">
-          <el-icon><Setting /></el-icon> 系统设置
+          <el-icon><Icon icon="ep:setting" /> </el-icon>
+          <span>系统设置</span>
         </el-button>
         <el-button type="info" plain @click="handleDocs">
-          <el-icon><Document /></el-icon> 查看文档
+          <el-icon><Icon icon="ep:document" /> </el-icon>
+          <span>查看文档</span>
         </el-button>
       </div>
     </div>
@@ -97,8 +103,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 首页组件
+ * 展示欢迎信息、系统状态概览和快捷入口
+ */
 import { computed } from 'vue';
-import { Odometer, User, Setting, Document } from '@element-plus/icons-vue';
 
 // 获取当前日期
 const currentDate = computed(() => {

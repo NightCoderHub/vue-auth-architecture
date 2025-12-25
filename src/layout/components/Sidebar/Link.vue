@@ -5,15 +5,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 链接组件
+ * 自动识别内部链接 (router-link) 和外部链接 (a 标签)
+ */
 import { computed } from 'vue';
 
-
-const props = defineProps({
-  to: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<{
+  /** 链接地址 */
+  to: string
+}>();
 
 const isExternal = computed(() => {
   return /^(https?:|mailto:|tel:)/.test(props.to);

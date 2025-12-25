@@ -2,7 +2,7 @@
   <div class="not-found-container">
     <div class="content">
       <div class="icon-wrapper">
-        <el-icon :size="100" class="warning-icon"><Warning /></el-icon>
+        <Icon icon="ep:warning" class="warning-icon" width="100" height="100" />
       </div>
       <h1 class="error-code">404</h1>
       <h2 class="error-title">页面未找到</h2>
@@ -21,7 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import { Warning } from '@element-plus/icons-vue';
+/**
+ * @description: 404 错误页面
+ */
 </script>
 
 <style scoped>

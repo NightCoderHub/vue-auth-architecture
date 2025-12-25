@@ -3,7 +3,7 @@
     <div class="login-content">
       <div class="login-header">
         <div class="logo-circle">
-          <el-icon><Lock /></el-icon>
+          <Icon icon="ep:lock" class="logo-icon" />
         </div>
         <h2 class="title">Vue 前端鉴权架构</h2>
         <p class="subtitle">企业级中后台权限管理系统方案</p>
@@ -22,8 +22,11 @@
             <el-input
               v-model="form.username"
               placeholder="请输入用户名"
-              :prefix-icon="User"
-            />
+            >
+              <template #prefix>
+                <Icon icon="ep:user" />
+              </template>
+            </el-input>
           </el-form-item>
 
           <el-form-item label="密码" prop="password">
@@ -31,9 +34,12 @@
               v-model="form.password"
               type="password"
               placeholder="请输入密码"
-              :prefix-icon="Lock"
               show-password
-            />
+            >
+              <template #prefix>
+                <Icon icon="ep:lock" />
+              </template>
+            </el-input>
           </el-form-item>
 
           <div class="form-options">
@@ -71,9 +77,12 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 登录页面组件
+ * 处理用户登录逻辑、表单验证及反馈
+ */
 import { reactive, ref } from 'vue';
 import { login } from '../auth/authService';
-import { User, Lock } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus';
 
 const loginFormRef = ref<FormInstance>();
@@ -111,7 +120,7 @@ const handleLogin = async () => {
 </script>
 
 <style scoped lang="scss">
-    @use 'sass:color';
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 .login-container {
@@ -159,7 +168,7 @@ const handleLogin = async () => {
   margin: 0 auto 16px;
   box-shadow: 0 8px 24px rgba($primary, 0.25);
 
-  :deep(.el-icon) {
+  .logo-icon {
       font-size: 28px;
       color: #fff;
   }

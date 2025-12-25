@@ -11,12 +11,12 @@
       >
         <Icon
           v-if="tag.meta && tag.meta.icon"
-          :icon="tag.meta.icon.startsWith('ep:') ? tag.meta.icon : 'ep:' + tag.meta.icon"
+          :icon="tag.meta.icon"
           class="tag-icon"
         />
         {{ tag.title }}
         <span v-if="!isAffix(tag)" class="close-icon" @click.prevent.stop="closeSelectedTag(tag)">
-          <el-icon><Close /></el-icon>
+          <Icon icon="ep:close" />
         </span>
       </router-link>
     </scroll-pane>
@@ -24,14 +24,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 标签页视图组件
+ * 显示已访问的视图标签，支持关闭和切换
+ */
 import { computed, watch, onMounted, ref } from 'vue';
 import { useRoute, useRouter, type RouteRecordRaw } from 'vue-router';
 import { useTagsViewStore, type TagView } from '@/stores/tagsView';
 import { usePermissionStore } from '@/permission/permissionStore';
-import { Close } from '@element-plus/icons-vue';
-// ScrollPane could be a simple div with overflow-x: auto for now
 import ScrollPane from './ScrollPane.vue';
-import path from 'path-browserify'; // Need to install types if missing, or use custom resolve
+import path from 'path-browserify';
 
 const tagsViewStore = useTagsViewStore();
 const permissionStore = usePermissionStore();

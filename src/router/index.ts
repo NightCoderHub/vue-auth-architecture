@@ -14,13 +14,13 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: 'Layout',
     component: Layout,
     redirect: '/home',
-    meta: { title: '首页', icon: 'house', alwaysShow: false },
+    meta: { title: '首页', icon: 'ep:house', alwaysShow: false },
     children: [
       {
         path: 'home',
         name: 'Home',
         component: () => import('../views/HomeView.vue'),
-        meta: { title: '首页', icon: 'house', affix: true }
+        meta: { title: '首页', icon: 'ep:house', affix: true }
       }
     ]
   },

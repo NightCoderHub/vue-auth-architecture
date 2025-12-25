@@ -19,7 +19,7 @@ import Sidebar from './components/Sidebar/index.vue';
 import Navbar from './components/Navbar.vue';
 import TagsView from './components/TagsView/index.vue';
 import AppMain from './components/AppMain.vue';
-import useResizeHandler from './mixin/ResizeHandler';
+import useResizeHandler from '@/composables/useResizeHandler';
 
 const appStore = useAppStore();
 const { device, sidebar } = useResizeHandler();

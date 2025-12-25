@@ -11,10 +11,10 @@
           :class="{ 'submenu-title-noDropdown': !isNest }"
           v-bind="$attrs"
         >
-          <!-- 图标处理：支持 Element Plus 图标的 'ep:' 前缀 -->
+          <!-- 图标处理：直接使用 Iconify 格式的图标名 -->
           <Icon
             v-if="leafRoute.meta.icon"
-            :icon="leafRoute.meta.icon.startsWith('ep:') ? leafRoute.meta.icon : 'ep:' + leafRoute.meta.icon"
+            :icon="leafRoute.meta.icon"
             class="el-icon"
           />
           <template #title>
@@ -32,7 +32,7 @@
       <template #title>
         <Icon
           v-if="item.meta && item.meta.icon"
-          :icon="item.meta.icon.startsWith('ep:') ? item.meta.icon : 'ep:' + item.meta.icon"
+          :icon="item.meta.icon"
           class="el-icon"
         />
         <span v-if="item.meta">{{ item.meta.title }}</span>
@@ -51,12 +51,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 侧边栏菜单项组件
+ * 递归渲染菜单树，支持无限层级
+ */
 import { computed } from 'vue';
-import type { PropType } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 import AppLink from './Link.vue';
 import { normalizePath } from '@/utils/path-governance';
-
 
 defineOptions({
   inheritAttrs: false,
@@ -65,28 +67,18 @@ defineOptions({
 /**
  * Props 定义
  */
-const props = defineProps({
-  /**
-   * 要渲染的路由对象
-   */
-  item: {
-    type: Object as PropType<RouteRecordRaw>,
-    required: true,
-  },
-  /**
-   * 该项是否嵌套在另一个子菜单中
-   */
-  isNest: {
-    type: Boolean,
-    default: false,
-  },
-  /**
-   * 用于解析相对路径的基础路径
-   */
-  basePath: {
-    type: String,
-    default: '',
-  },
+interface Props {
+  /** 要渲染的路由对象 */
+  item: RouteRecordRaw;
+  /** 该项是否嵌套在另一个子菜单中 */
+  isNest?: boolean;
+  /** 用于解析相对路径的基础路径 */
+  basePath?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isNest: false,
+  basePath: '',
 });
 
 // 叶子路由计算的辅助类型

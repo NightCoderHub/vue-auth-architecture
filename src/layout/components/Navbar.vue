@@ -6,9 +6,14 @@
         :class="{ 'is-active': sidebar.opened }"
         @click="toggleSideBar"
       >
-        <el-icon :size="20" class="hamburger-icon"><Expand v-if="!sidebar.opened" /><Fold v-else /></el-icon>
+        <el-icon :size="20" class="hamburger-icon">
+          <Icon :icon="sidebar.opened ? 'ep:fold' : 'ep:expand'" />
+        </el-icon>
       </div>
-      <el-breadcrumb v-if="!isBreadcrumbHidden" class="breadcrumb-container" :separator-icon="ArrowRight">
+      <el-breadcrumb v-if="!isBreadcrumbHidden" class="breadcrumb-container">
+        <template #separator>
+          <Icon icon="ep:arrow-right" />
+        </template>
         <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
           <span
             v-if="item.redirect === 'noRedirect' || index === levelList.length - 1"
@@ -24,7 +29,7 @@
         <div class="avatar-wrapper">
           <img :src="avatar" class="user-avatar" />
           <span class="user-name">Admin</span>
-          <el-icon class="el-icon--right"><CaretBottom /></el-icon>
+          <Icon icon="ep:caret-bottom" class="el-icon--right" />
         </div>
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
@@ -42,11 +47,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @description: 顶部导航栏组件
+ * 包含汉堡按钮、面包屑导航和用户头像下拉菜单
+ */
 import { computed } from 'vue';
 import { useRoute, useRouter, type RouteLocationMatched } from 'vue-router';
 import { useAppStore } from '@/stores/app';
 import { logout as authLogout } from '@/auth/authService';
-import { Expand, Fold, CaretBottom, ArrowRight } from '@element-plus/icons-vue';
 import userAvatar from '@/assets/vue.svg';
 
 const route = useRoute();
@@ -148,10 +156,6 @@ const logout = async () => {
     &:hover {
       background: var(--color-bg-spotlight);
       color: var(--color-primary);
-    }
-
-    .hamburger-icon {
-      font-size: 20px;
     }
   }
 
