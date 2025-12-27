@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
@@ -20,8 +21,10 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@iconify-icons/icon-park-outline": "^1.2.11",
     "@iconify-json/icon-park-outline": "^1.2.4",
+    "@pinia/testing": "^1.0.3",
     "@types/mockjs": "^1.0.10",
     "@types/node": "^24.10.1",
     "@types/path-browserify": "^1.0.3",
@@ -32,9 +35,11 @@
     "@vitest/coverage-v8": "^4.0.16",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.8.1",
+    "axios-mock-adapter": "^2.1.0",
     "happy-dom": "^20.0.11",
     "jsdom": "^27.3.0",
     "mockjs": "^1.1.0",
+    "msw": "^2.12.4",
     "sortablejs": "^1.15.6",
     "typescript": "~5.9.3",
     "unplugin-auto-import": "^20.3.0",
