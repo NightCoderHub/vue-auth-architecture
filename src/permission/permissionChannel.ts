@@ -3,8 +3,8 @@ import { useAuthStore } from '../auth/authStore';
 import { usePermissionStore } from './permissionStore';
 import { resetRouter, buildRoutes } from './routeBuilder';
 import router from '../router';
-import apiClient from '../axios'; // 用于获取权限（作为后备或手动刷新）
-import type { ApiResponse, MenuItem } from '../auth/authTypes';
+import apiProvider from "../axios/instance";
+import type { MenuItem } from '../auth/authTypes';
 
 // WebSocket 实例
 let socket: WebSocket | null = null;
@@ -192,8 +192,8 @@ async function handlePermissionUpdate(newPermissions?: string[], newMenus?: Menu
     if (!permissions || !menus) {
       console.log('[PermissionChannel] 正在从 API 获取新权限...');
       const [fetchedPermissions, fetchedMenus] = await Promise.all([
-        apiClient.get<string[]>('/user/permissions'),
-        apiClient.get<MenuItem[]>('/user/menus')
+        apiProvider.user.getPermissions(),
+        apiProvider.user.getMenus()
       ]);
       permissions = fetchedPermissions;
       menus = fetchedMenus;
