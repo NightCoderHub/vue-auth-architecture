@@ -1,11 +1,10 @@
-import apiClient from '../axios';
 import { useAuthStore } from './authStore';
 import { usePermissionStore } from '../permission/permissionStore';
 import { resetRouter, initDynamicRoutes } from '../permission/routeBuilder';
 import { closePermissionChannel, initPermissionChannel } from '../permission/permissionChannel';
 import { ensureAuthReady } from './refresh';
 import router from '../router';
-import type { UserInfo } from './authTypes';
+import apiProvider from "@/axios/instance";
 
 /**
  * 认证业务逻辑
@@ -38,8 +37,8 @@ export async function login(username: string, password: string) {
     localStorage.removeItem(LOGGED_OUT_KEY);
 
     // 1. 登录请求
-    const res = await apiClient.post<{ accessToken: string }>('/auth/login', { username, password });
-    const { accessToken } = res;
+    const res = await apiProvider.auth.login({ username, password });
+    const {accessToken} = res;
 
     // 2. 更新 Store (认证)
     // 必须先设置 Token，否则后续的 API 请求无法通过拦截器的鉴权
@@ -49,8 +48,8 @@ export async function login(username: string, password: string) {
 
     // 3. 并行获取个人资料、权限
     const [userRes, permRes] = await Promise.all([
-      apiClient.get<UserInfo>('/user/profile'),
-      apiClient.get<string[]>('/user/permissions')
+      apiProvider.user.getProfile(),
+      apiProvider.user.getPermissions()
     ]);
 
     const user = userRes;
@@ -118,8 +117,8 @@ export function restoreSession(): Promise<boolean> {
 
       // 2. 并行获取个人资料、权限
       const [user, permissions] = await Promise.all([
-        apiClient.get<UserInfo>('/user/profile'),
-        apiClient.get<string[]>('/user/permissions')
+        apiProvider.user.getProfile(),
+        apiProvider.user.getPermissions()
       ]);
 
       // 3. 更新 Stores
@@ -153,7 +152,7 @@ export function logout() {
 
   // 1. 调用后端退出登录（以清除 Cookie）
   try {
-    apiClient.post('/auth/logout').catch(() => {});
+    apiProvider.auth.logout().catch(() => {});
     console.log('[AuthService] 已调用后端退出登录');
   } catch (e) {
     console.warn('[AuthService] 后端退出登录失败', e);
