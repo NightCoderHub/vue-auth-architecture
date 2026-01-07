@@ -11,7 +11,7 @@ export interface UserInfo {
   roles: Array<{
     id: number;
     name: string;
-    description: string;
+    description?: string;
   }>;
   avatar?: string;
 }
