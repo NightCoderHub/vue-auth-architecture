@@ -4,7 +4,7 @@ import { resetRouter, initDynamicRoutes } from '../permission/routeBuilder';
 import { closePermissionChannel, initPermissionChannel } from '../permission/permissionChannel';
 import { ensureAuthReady } from './refresh';
 import router from '../router';
-import apiProvider from "@/axios/instance";
+import apiProvider from "../axios/instance";
 
 /**
  * 认证业务逻辑
