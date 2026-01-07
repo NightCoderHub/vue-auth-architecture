@@ -187,13 +187,11 @@ import Permission from '../components/Permission.vue';
 import apiClient from '../axios';
 import { wsStatus, closePermissionChannel } from '../permission/permissionChannel';
 
-// --- Stores & State ---
 const authStore = useAuthStore();
 const user = computed(() => authStore.userInfo);
 const accessToken = computed(() => authStore.accessToken);
 const logs = ref<string[]>([]);
 
-// --- Mock Data for UI Beautification ---
 const metrics = ref([
   { label: '系统负载', value: '24', unit: '%', trend: -12, icon: 'icon-park-outline:cpu', type: 'primary' },
   { label: '活跃会话', value: '1,284', unit: '', trend: 5.4, icon: 'icon-park-outline:monitor', type: 'success' },
@@ -213,7 +211,6 @@ const timeGreeting = computed(() => {
   return '晚上好';
 });
 
-// --- Functional Logic (Preserved) ---
 const log = (msg: string) => logs.value.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
 
 watch(wsStatus, (newStatus) => {
@@ -266,7 +263,7 @@ const updateRolePermissions = async () => {
 </script>
 
 <style lang="scss" scoped>
-    @use 'sass:color';
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 .dashboard-container {
@@ -274,7 +271,6 @@ const updateRolePermissions = async () => {
   background-color: transparent;
 }
 
-/* 1. Welcome Section */
 .welcome-section {
   display: flex;
   justify-content: space-between;
@@ -317,7 +313,6 @@ const updateRolePermissions = async () => {
   }
 }
 
-/* 2. Metric Cards */
 .metric-cards {
   margin-bottom: 24px;
 
@@ -391,7 +386,6 @@ const updateRolePermissions = async () => {
   }
 }
 
-/* Common Card Styles */
 .smart-card, .action-card, .profile-card, .dev-tools-card {
   border: none;
   border-radius: var(--app-card-radius);
@@ -423,7 +417,6 @@ const updateRolePermissions = async () => {
   }
 }
 
-/* Suggestion List */
 .suggestions-list {
   .suggestion-item {
     display: flex;
@@ -464,7 +457,6 @@ const updateRolePermissions = async () => {
   }
 }
 
-/* Permission Grid */
 .permission-grid {
     display: flex;
     align-items: flex-start;
@@ -490,7 +482,6 @@ const updateRolePermissions = async () => {
     }
 }
 
-/* Profile Card */
 .user-info-compact {
   display: flex;
   align-items: center;
@@ -556,7 +547,6 @@ const updateRolePermissions = async () => {
   }
 }
 
-/* Dev Tools */
 .tool-actions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -610,7 +600,6 @@ const updateRolePermissions = async () => {
   }
 }
 
-// Mobile Responsive
 @media (max-width: 768px) {
     .dashboard-container {
         padding: 16px;
