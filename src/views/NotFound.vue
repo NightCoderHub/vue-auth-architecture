@@ -10,10 +10,16 @@
 
       <div class="actions">
         <el-button type="primary" size="large" @click="$router.push('/')">
-           <Icon icon="icon-park-outline:home" /> 返回首页
+          <el-icon>
+           <Icon icon="icon-park-outline:home" />
+          </el-icon>
+           <span>返回首页</span>
         </el-button>
         <el-button size="large" @click="$router.back()"  >
-          <Icon icon="icon-park-outline:left" />  返回上一页
+          <el-icon>
+            <Icon icon="icon-park-outline:left" />
+          </el-icon>
+           <span>返回上一页</span>
         </el-button>
       </div>
     </div>
