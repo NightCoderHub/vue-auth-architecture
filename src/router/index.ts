@@ -25,6 +25,12 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/demo-orval',
+    name: 'DemoOrval',
+    component: () => import('../views/DemoOrval.vue'),
+    meta: { hidden: false, title: 'Orval 示例' }
+  },
+  {
     path: '/403',
     name: 'Forbidden',
     component: () => import('../views/Forbidden.vue'),
