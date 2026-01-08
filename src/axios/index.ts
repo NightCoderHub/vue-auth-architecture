@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import type { InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import type { InternalAxiosRequestConfig,AxiosRequestConfig, AxiosResponse } from 'axios';
 import { useAuthStore } from '../auth/authStore';
 import { ensureAuthReady } from '../auth/refresh';
 import router from '../router';
@@ -180,3 +180,23 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
+
+// 提取接口返回类型中的 data 字段类型
+type UnwrapData<T> = T extends { data: infer U } ? U : T;
+
+// Orval Mutator 适配器
+export const customInstance = <T>(config: AxiosRequestConfig, options?: AxiosRequestConfig): Promise<UnwrapData<T>> => {
+  const source = axios.CancelToken.source();
+  const promise = apiClient({
+    ...config,
+    ...options,
+    cancelToken: source.token,
+  }).then((data) => data as UnwrapData<T>);
+
+  // @ts-ignore
+  promise.cancel = () => {
+    source.cancel('Query was cancelled');
+  };
+
+  return promise;
+};

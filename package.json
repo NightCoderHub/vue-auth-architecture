@@ -10,10 +10,12 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "gen:api": "node scripts/swagger-generate.js"
+    "gen:api": "orval --config orval.config.cjs",
+    "gen:api:legacy": "node scripts/swagger-generate.js"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
+    "@tanstack/vue-query": "^5.92.5",
     "axios": "^1.13.2",
     "element-plus": "^2.13.0",
     "pinia": "^3.0.4",
@@ -41,7 +43,7 @@
     "jsdom": "^27.3.0",
     "mockjs": "^1.1.0",
     "msw": "^2.12.4",
-    "sortablejs": "^1.15.6",
+    "orval": "^7.13.2",
     "swagger-typescript-api": "^13.2.16",
     "typescript": "~5.9.3",
     "unplugin-auto-import": "^20.3.0",

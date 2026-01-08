@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { VueQueryPlugin } from '@tanstack/vue-query'
 import App from './App.vue'
 import router from './router'
 import './router/guard' // 激活路由守卫
@@ -25,6 +26,7 @@ const app = createApp(App)
 
 // 1. 安装插件
 app.use(createPinia())
+app.use(VueQueryPlugin)
 app.use(router)
 // 2. 全局注册 Icon 组件
 app.component('Icon', Icon)
