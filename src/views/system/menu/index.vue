@@ -1,140 +1,3 @@
-<script setup lang="ts">
-/**
- * @description: 菜单管理列表页面
- */
-defineOptions({
-  name: 'MenuManagement'
-})
-
-import { ref, onMounted, nextTick } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { getMenuList, deleteMenu, updateMenuStatus, type MenuData } from '@/api/system/menu';
-import MenuDialog from './components/MenuDialog.vue';
-import Sortable from 'sortablejs';
-import * as XLSX from 'xlsx';
-
-// 列表数据
-const loading = ref(false);
-const tableData = ref<MenuData[]>([]);
-const queryParams = ref({
-  keyword: '',
-  status: undefined
-});
-
-// 引用弹窗组件
-const menuDialogRef = ref<InstanceType<typeof MenuDialog>>();
-
-// 获取列表
-const fetchList = async () => {
-  loading.value = true;
-  try {
-    const data = await getMenuList(queryParams.value);
-    tableData.value = data;
-  } catch (error) {
-    console.error(error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-// 新增
-const handleAdd = (parentId?: number) => {
-  const defaultData = parentId ? { parentId } as MenuData : undefined;
-  menuDialogRef.value?.open(defaultData);
-};
-
-// 编辑
-const handleEdit = (row: MenuData) => {
-  menuDialogRef.value?.open(row);
-};
-
-// 删除
-const handleDelete = (row: MenuData) => {
-  ElMessageBox.confirm(
-    `确定要删除菜单 "${row.title}" 吗？如果包含子菜单将一并删除。`,
-    '警告',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).then(async () => {
-    try {
-      if (row.id) {
-        await deleteMenu(row.id);
-        ElMessage.success('删除成功');
-        fetchList();
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }).catch(() => {
-    // 取消删除
-  });
-};
-
-// 状态切换
-const handleStatusChange = async (row: MenuData) => {
-  if (!row.id || row.status === undefined) return;
-  const newStatus = row.status === 1 ? 0 : 1;
-  const text = newStatus === 1 ? '启用' : '禁用';
-
-  try {
-    await updateMenuStatus(row.id, newStatus);
-    row.status = newStatus;
-    ElMessage.success(`已${text}菜单`);
-  } catch (error) {
-    // 恢复状态
-    // row.status = row.status === 1 ? 0 : 1;
-    console.error(error);
-  }
-};
-
-// 导出 Excel
-const handleExport = () => {
-  // 扁平化数据用于导出
-  const flatData: any[] = [];
-  const flatten = (list: MenuData[]) => {
-    list.forEach(item => {
-      const { children, ...rest } = item;
-      flatData.push(rest);
-      if (children) flatten(children);
-    });
-  };
-  flatten(tableData.value);
-
-  const ws = XLSX.utils.json_to_sheet(flatData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Menus");
-  XLSX.writeFile(wb, "menu_list.xlsx");
-};
-
-// 拖拽排序初始化
-const initSortable = () => {
-  const el = document.querySelector('.el-table__body-wrapper tbody');
-  if (el) {
-    Sortable.create(el as HTMLElement, {
-      handle: '.drag-handle',
-      animation: 150,
-      onEnd: ({ newIndex, oldIndex }) => {
-        if (newIndex !== undefined && oldIndex !== undefined && newIndex !== oldIndex) {
-          ElMessage.success(`排序已更新: ${oldIndex} -> ${newIndex} (仅前端演示)`);
-          // 实际场景需调用后端排序接口
-        }
-      }
-    });
-  }
-};
-
-onMounted(() => {
-  console.log(1);
-  fetchList();
-  nextTick(() => {
-    initSortable();
-  });
-});
-</script>
-
 <template>
   <div class="app-container">
     <div class="filter-container">
@@ -160,19 +23,13 @@ onMounted(() => {
     </div>
 
     <el-table
-      v-loading="loading"
+      v-loading="isLoading"
       :data="tableData"
       row-key="id"
       border
       default-expand-all
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
-      <el-table-column width="50" align="center">
-        <template #default>
-          <Icon icon="icon-park-outline:drag" class="drag-handle" style="cursor: grab; color: #999;" />
-        </template>
-      </el-table-column>
-
       <el-table-column prop="title" label="菜单名称" min-width="150" />
 
       <el-table-column prop="icon" label="图标" width="80" align="center">
@@ -227,6 +84,168 @@ onMounted(() => {
     <MenuDialog ref="menuDialogRef" :menu-list="tableData" @success="fetchList" />
   </div>
 </template>
+
+<script setup lang="ts">
+/**
+ * @description: 菜单管理列表页面
+ */
+defineOptions({
+  name: 'MenuManagement'
+})
+
+import { ref, computed } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import apiProvider from "@/axios/instance";
+import type { MenuItem } from '@/api';
+import { useGetAllMenus } from '@/api/endpoints';
+import { listToTree } from '@/utils/tree';
+import MenuDialog from './components/MenuDialog.vue';
+import * as XLSX from 'xlsx';
+
+/**
+ * 菜单数据结构
+ * 扩展自 API 返回的 MenuItem，增加 UI 层所需的 status 字段并修正 children 类型
+ * 同时将 id 和 name 设为可选，以支持表单的新增模式
+ */
+export interface MenuData extends Omit<MenuItem, 'children' | 'id' | 'name'> {
+  id?: number;
+  name?: string;
+  /** 状态 (1:启用, 0:禁用) */
+  status?: number;
+  /** 子菜单 */
+  children?: MenuData[];
+}
+
+// 查询参数
+const queryParams = ref({
+  keyword: '',
+  status: undefined as number | undefined
+});
+
+const getData = async () => {
+  try {
+    const response = await apiProvider.menus.getAllMenus();
+    console.log('获取菜单列表成功:', response);
+
+  } catch (error) {
+    console.error('获取菜单列表失败:', error);
+
+  }
+};
+
+// 使用 TanStack Query 获取数据
+const { data: menuRawData, isLoading, refetch } = useGetAllMenus();
+
+// 处理后的表格数据（过滤 + 树形转换）
+const tableData = computed(() => {
+  if (!menuRawData.value) return [];
+
+  // 1. 映射数据（处理 status/enabled 兼容性）
+  let list = menuRawData.value.map(item => ({
+    ...item,
+    status: (item as any).status ?? (item.enabled ? 1 : 0)
+  })) as MenuData[];
+
+  // 2. 客户端过滤
+  if (queryParams.value.keyword) {
+    const keyword = queryParams.value.keyword.toLowerCase();
+    list = list.filter(item =>
+      item.title.toLowerCase().includes(keyword) ||
+      item.path.toLowerCase().includes(keyword)
+    );
+  }
+
+  if (queryParams.value.status !== undefined) {
+    list = list.filter(item => item.status === queryParams.value.status);
+  }
+
+  // 3. 转换为树形结构
+  return listToTree(list);
+});
+
+// 引用弹窗组件
+const menuDialogRef = ref<InstanceType<typeof MenuDialog>>();
+
+// 获取列表 (手动刷新)
+const fetchList = () => {
+  refetch();
+};
+
+// 新增
+const handleAdd = (parentId?: number) => {
+  const defaultData = parentId ? { parentId } as MenuData : undefined;
+  menuDialogRef.value?.open(defaultData);
+};
+
+// 编辑
+const handleEdit = (row: MenuData) => {
+  menuDialogRef.value?.open(row);
+};
+
+// 删除
+const handleDelete = (row: MenuData) => {
+  ElMessageBox.confirm(
+    `确定要删除菜单 "${row.title}" 吗？如果包含子菜单将一并删除。`,
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(async () => {
+    try {
+      if (row.id) {
+        await apiProvider.menus.deleteMenu(row.id);
+        ElMessage.success('删除成功');
+        fetchList();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }).catch(() => {
+    // 取消删除
+  });
+};
+
+// 状态切换
+const handleStatusChange = async (row: MenuData) => {
+  if (!row.id || row.status === undefined) return;
+  const newStatus = row.status === 1 ? 0 : 1;
+  const text = newStatus === 1 ? '启用' : '禁用';
+
+  try {
+    // await apiProvider.menus.updateMenuStatus(row.id, newStatus);
+    row.status = newStatus;
+    ElMessage.success(`已${text}菜单`);
+  } catch (error) {
+    // 恢复状态
+    // row.status = row.status === 1 ? 0 : 1;
+    console.error(error);
+  }
+};
+
+// 导出 Excel
+const handleExport = () => {
+  // 扁平化数据用于导出
+  const flatData: any[] = [];
+  const flatten = (list: MenuData[]) => {
+    list.forEach(item => {
+      const { children, ...rest } = item;
+      flatData.push(rest);
+      if (children) flatten(children);
+    });
+  };
+  flatten(tableData.value);
+
+  const ws = XLSX.utils.json_to_sheet(flatData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Menus");
+  XLSX.writeFile(wb, "menu_list.xlsx");
+};
+
+</script>
+
+
 
 <style scoped>
 .filter-container {

@@ -26,7 +26,22 @@ const app = createApp(App)
 
 // 1. 安装插件
 app.use(createPinia())
-app.use(VueQueryPlugin)
+app.use(VueQueryPlugin, {
+  queryClientConfig: {
+    defaultOptions: {
+      queries: {
+        retry: (failureCount, error: any) => {
+          // 如果 Axios 拦截器已经判定为“会话过期”，则不进行 Vue Query 级别的重试
+          if (error?.message === '会话已过期' || error?.response?.status === 401) {
+            return false;
+          }
+          // 其他错误（如 500、网络超时）重试 3 次
+          return failureCount < 3;
+        },
+      },
+    },
+  },
+})
 app.use(router)
 // 2. 全局注册 Icon 组件
 app.component('Icon', Icon)
