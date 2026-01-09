@@ -347,34 +347,48 @@ User Input / API
 
 ```
 src/
+├─ api/                    # API 接口定义
 ├─ assets/                 # 静态资源目录
-│  └─ vue.svg              # Vue Logo 图标
-├─ auth/                   # 认证模块核心目录
-│  ├─ authService.spec.ts  # 认证服务单元测试
-│  ├─ authService.ts       # 认证业务逻辑：登录/登出/会话恢复
-│  ├─ authStore.ts         # Pinia Store：认证状态管理
-│  ├─ authTypes.ts         # 类型定义：User, AuthStatus等
+├─ auth/                   # 认证模块：登录/Token刷新/状态管理
+│  ├─ authService.ts       # 认证核心业务逻辑
+│  ├─ authStore.ts         # 认证状态管理 (Pinia)
 │  └─ refresh.ts           # Token 刷新机制与并发控制
-├─ axios/                  # HTTP 请求配置目录
-│  └─ index.ts             # Axios 实例封装与拦截器配置
-├─ bootstrap/              # 应用启动引导目录
-│  └─ index.ts             # 应用初始化引导逻辑
-├─ components/             # 公共组件目录
-│  └─ Permission.vue       # 权限控制包装组件
-├─ permission/             # 权限管理目录
-│  ├─ permissionChannel.ts # WebSocket 实时权限同步通道
-│  ├─ permissionStore.ts   # Pinia Store：权限与菜单管理
-│  └─ routeBuilder.ts      # 动态路由构建与重置逻辑
-├─ router/                 # 路由配置目录
+├─ axios/                  # HTTP 请求配置
+│  └─ index.ts             # Axios 实例与拦截器封装
+├─ bootstrap/              # 应用引导程序
+│  └─ index.ts             # 初始化逻辑：环境准备与会话恢复
+├─ components/             # 公共组件
+│  ├─ Dict/                # 数据字典组件 (DictTag, DictSelect)
+│  └─ Permission.vue       # 权限控制组件
+├─ composables/            # 通用组合式函数
+├─ dict/                   # 数据字典核心模块
+│  ├─ dictStore.ts         # 字典状态缓存
+│  ├─ dictUtils.ts         # 字典标签/样式转换工具
+│  ├─ preload.ts           # 字典预加载机制
+│  └─ useDict.ts           # 字典消费 Hook
+├─ layout/                 # 布局系统
+│  ├─ components/          # 布局子组件 (Sidebar, Navbar, TagsView)
+│  └─ index.vue            # 布局入口
+├─ mocks/                  # MSW Mock 服务数据
+├─ permission/             # 权限管理模块
+│  ├─ permissionChannel.ts # WebSocket 实时权限同步
+│  ├─ permissionStore.ts   # 权限数据管理
+│  └─ routeBuilder.ts      # 动态路由构建器
+├─ router/                 # 路由配置
 │  ├─ guard.ts             # 全局路由守卫
-│  └─ index.ts             # 路由实例与基础路由配置
-├─ views/                  # 页面视图目录
-│  ├─ Dashboard.vue        # 仪表盘页面
-│  ├─ Forbidden.vue        # 403 无权限页面
-│  └─ Login.vue            # 登录页面
+│  └─ index.ts             # 路由实例与基础路由
+├─ stores/                 # 全局状态管理 (App, TagsView等)
+├─ styles/                 # 全局样式与变量 (SCSS)
+├─ types/                  # TypeScript 类型定义
+├─ utils/                  # 工具函数库
+│  └─ path-governance.ts   # 路径治理工具
+├─ views/                  # 业务页面视图
+│  ├─ compliance/          # 复杂表单示例
+│  ├─ system/              # 系统管理页面
+│  ├─ Dashboard.vue        # 仪表盘
+│  └─ Login.vue            # 登录页
 ├─ App.vue                 # 应用根组件
-├─ main.ts                 # 应用入口文件
-└─ style.css               # 样式文件 (全局样式)
+└─ main.ts                 # 应用入口文件
 ```
 ### 结构说明：
 
