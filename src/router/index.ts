@@ -21,6 +21,21 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Home',
         component: () => import('../views/HomeView.vue'),
         meta: { title: '首页', icon: 'icon-park-outline:home', affix: true }
+      },
+    ]
+  },
+  {
+    path: '/form',
+    name: 'ComplianceLayout',
+    component: Layout,
+    redirect: '/form/compliance',
+    meta: { title: '合规申报', icon: 'ep:document', alwaysShow: false },
+    children: [
+      {
+        path: 'compliance',
+        name: 'Compliance',
+        component: () => import('@/views/compliance/MainForm.vue'),
+        meta: { title: '合规申报', icon: 'ep:document-checked',  affix: true }
       }
     ]
   },
