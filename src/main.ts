@@ -48,10 +48,18 @@ app.component('Icon', Icon)
 setupDirectives(app)
 
 // 3. 执行引导逻辑
-// 我们在挂载应用前等待认证恢复，
-// 以确保 UI 立即反映正确的状态。
-console.log('[App] 正在启动...');
-bootstrap().then(() => {
+async function startApp() {
+  // if (import.meta.env.VITE_APP_MOCK === 'true') {
+  //   const { worker } = await import('./mocks/browser')
+  //   await worker.start({
+  //     onUnhandledRequest: 'bypass',
+  //   })
+  // }
+
+  console.log('[App] 正在启动...');
+  await bootstrap();
   console.log('[App] 正在挂载...');
-  app.mount('#app')
-});
+  app.mount('#app');
+}
+
+startApp();
