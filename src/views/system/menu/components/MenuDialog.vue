@@ -5,7 +5,8 @@
 import { ref, reactive, computed } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import { createMenu, updateMenu, type MenuData } from '@/api/system/menu';
+import apiProvider from "@/axios/instance";
+import type { MenuData } from '../index.vue';
 
 // Props 定义
 interface Props {
@@ -28,6 +29,7 @@ const formRef = ref<FormInstance>();
 const formData = reactive<MenuData>({
   parentId: null,
   title: '',
+  name: '',
   path: '',
   component: 'Layout',
   type: 1, // 默认为菜单
@@ -62,10 +64,32 @@ const rules = reactive<FormRules>({
   type: [{ required: true, message: '请选择菜单类型', trigger: 'change' }]
 });
 
-// 计算属性：树形选择器的数据（排除自身，避免死循环）
+// 计算属性：树形选择器的数据（排除自身及其子节点，防止循环引用）
 const treeOptions = computed(() => {
-  // 简单处理：实际场景可能需要递归过滤掉当前编辑的节点及其子节点
-  return props.menuList;
+  if (!isEdit.value || !formData.id) {
+    return props.menuList;
+  }
+
+  /**
+   * 递归过滤掉指定 ID 的节点及其子节点
+   * @param list 菜单列表
+   * @param targetId 要排除的节点 ID
+   */
+  const filterTree = (list: MenuData[], targetId: number): MenuData[] => {
+    return list
+      .filter(item => item.id !== targetId)
+      .map(item => {
+        if (item.children && item.children.length > 0) {
+          return {
+            ...item,
+            children: filterTree(item.children, targetId)
+          };
+        }
+        return item;
+      });
+  };
+
+  return filterTree(props.menuList, formData.id);
 });
 
 /**
@@ -89,6 +113,7 @@ const open = (row?: MenuData) => {
     formData.id = undefined;
     formData.parentId = null;
     formData.title = '';
+    formData.name = '';
     formData.path = '';
     formData.component = 'Layout';
     formData.type = 1;
@@ -110,10 +135,10 @@ const handleSubmit = async () => {
       loading.value = true;
       try {
         if (isEdit.value && formData.id) {
-          await updateMenu(formData.id, formData);
+          await apiProvider.menus.updateMenu(formData.id, formData as any);
           ElMessage.success('更新成功');
         } else {
-          await createMenu(formData);
+          await apiProvider.menus.createMenu(formData as any);
           ElMessage.success('创建成功');
         }
         visible.value = false;
