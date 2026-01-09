@@ -96,6 +96,56 @@
 
 ---
 
+## 📚 数据字典系统 (Data Dictionary System)
+
+> **解耦、复用、一致性** 是中后台数据管理的核心目标。本项目实现了一套大厂级的“字典驱动开发”方案，彻底告别硬编码。
+
+### 核心特性
+* **统一管理**：所有字典逻辑聚合在 `src/dict` 目录下。
+* **按需加载 & 缓存**：同一字典类型仅在首次使用时请求，后续直接读取 Pinia 缓存。
+* **非阻塞预加载**：在应用启动/登录成功后并发加载常用字典，提升首屏渲染速度。
+* **类型安全**：字典值在 API 层统一为 `string`，但在组件层支持通过 `value-type` 自动转换（如转为 `number`）。
+
+### 架构设计
+1. **TypeScript Enum (`dictTypes.ts`)**: 定义字典类型的唯一来源。
+2. **Pinia Store (`dictStore.ts`)**: 处理全局缓存与并发请求复用（防止同一时刻重复请求）。
+3. **Global Components**: `DictTag`（展示态）与 `DictSelect`（编辑态）。
+4. **Composition Hook (`useDict.ts`)**: 支持并发加载多个字典的响应式 Hook。
+
+### 使用示例
+
+#### 1. 展示组件 `DictTag`
+自动翻译 `value` 并匹配 Element Plus 标签样式。
+```html
+<dict-tag type="user_status" :value="row.status" />
+```
+
+#### 2. 选择器组件 `DictSelect`
+支持 Select、Radio、Checkbox 模式，处理类型转换。
+```html
+<!-- 基础用法 -->
+<dict-select v-model="form.status" dict-type="user_status" />
+
+<!-- 自动类型转换：字典源是 "1"，表单需要数字 1 -->
+<dict-select v-model="form.status" dict-type="user_status" value-type="number" />
+
+<!-- 排除特定选项 -->
+<dict-select v-model="form.gender" dict-type="gender" :exclude="['0']" render-type="radio" />
+```
+
+#### 3. 编程式使用 (Hook & Utils)
+```typescript
+import { useDict, dictUtils } from '@/dict';
+
+// Hook 方式 (Composition API)
+const { user_status } = useDict('user_status');
+
+// 工具函数 (常用于 JS 逻辑或全局挂载)
+const label = dictUtils.label('user_status', '1'); // "正常"
+```
+
+---
+
 ## 🚀 应用初始化（Bootstrap 阶段）
 
 ### 为什么需要初始化阶段？
