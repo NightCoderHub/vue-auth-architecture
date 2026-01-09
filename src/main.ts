@@ -11,6 +11,8 @@ import 'element-plus/es/components/message/style/css'
 import 'element-plus/es/components/message-box/style/css'
 import { Icon, addIcon } from '@iconify/vue'
 import { registerIcons } from './icons/bundled'
+import { dictUtils } from '@/dict'
+import { DictTag, DictSelect } from '@/components/Dict'
 
 // 注册离线图标
 registerIcons()
@@ -43,8 +45,11 @@ app.use(VueQueryPlugin, {
   },
 })
 app.use(router)
-// 2. 全局注册 Icon 组件
+// 2. 全局注册组件与工具
 app.component('Icon', Icon)
+app.component('DictTag', DictTag)
+app.component('DictSelect', DictSelect)
+app.config.globalProperties.$dict = dictUtils
 setupDirectives(app)
 
 // 3. 执行引导逻辑
