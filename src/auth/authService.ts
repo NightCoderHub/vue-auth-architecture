@@ -5,6 +5,7 @@ import { closePermissionChannel, initPermissionChannel } from '../permission/per
 import { ensureAuthReady } from './refresh';
 import router from '../router';
 import apiProvider from "../axios/instance";
+import { preloadDicts } from '@/dict';
 
 /**
  * 认证业务逻辑
@@ -67,7 +68,10 @@ export async function login(username: string, password: string) {
     // 6. 启动安全通道
     initPermissionChannel();
 
-    // 7. 导航
+    // 7. 预加载字典 (非阻塞)
+    preloadDicts();
+
+    // 8. 导航
     const redirect = router.currentRoute.value.query.redirect as string;
     router.push(redirect || '/');
   } catch (error) {
