@@ -109,6 +109,10 @@
  */
 import { computed } from 'vue';
 
+defineOptions({
+  name: 'HomeView'
+});
+
 // 获取当前日期
 const currentDate = computed(() => {
   const now = new Date();
