@@ -14,14 +14,21 @@
     "gen:api:legacy": "node scripts/swagger-generate.js"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
     "@iconify/vue": "^5.0.0",
     "@tanstack/vue-query": "^5.92.5",
+    "@vee-validate/zod": "^4.15.1",
+    "@vueuse/core": "^14.1.0",
+    "@xstate/vue": "^5.0.0",
     "axios": "^1.13.2",
     "element-plus": "^2.13.0",
     "pinia": "^3.0.4",
     "sass": "^1.97.1",
+    "vee-validate": "^4.15.1",
     "vue": "^3.5.24",
-    "vue-router": "^4.6.4"
+    "vue-router": "^4.6.4",
+    "xstate": "^5.25.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
