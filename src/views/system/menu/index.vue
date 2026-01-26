@@ -122,17 +122,6 @@ const queryParams = ref({
   status: undefined as number | undefined
 });
 
-const getData = async () => {
-  try {
-    const response = await apiProvider.menus.getAllMenus();
-    console.log('获取菜单列表成功:', response);
-
-  } catch (error) {
-    console.error('获取菜单列表失败:', error);
-
-  }
-};
-
 // 使用 TanStack Query 获取数据
 const { data: menuRawData, isLoading, refetch } = useGetAllMenus();
 
