@@ -41,50 +41,56 @@ graph TD
 
 ### 2.1 缓存管理模块 (Storage)
 
-统一封装 `localStorage` / `sessionStorage`，支持过期时间和命名空间。
+基于策略模式封装 `localStorage` / `sessionStorage`，构建高可靠、高性能、可进化的前端缓存层。
+
+*   **核心特性**：
+    *   **自动序列化**: 自动处理 `JSON.stringify` / `JSON.parse`，支持复杂对象存取。
+    *   **命名空间 (Namespace)**: 强制 Key 前缀（如 `VUE_ADMIN_`），彻底解决多项目同域部署的覆盖问题。
+    *   **AES 加密**: 生产环境可配置自动开启 AES 加密，防止敏感数据明文泄露。
+    *   **二级缓存 (L2 Memory)**: 引入内存 `Map` 作为二级缓存 (Read-through/Write-through 策略)，大幅减少 `JSON.parse` 的 CPU 开销，提升高频读取性能。
+    *   **过期机制 (TTL)**: 支持单条数据自定义过期时间，读取时惰性删除。
+    *   **配额管理 (Quota)**: 自动捕获 `QuotaExceededError`，触发过期数据清理策略；若仍不足，则降级为静默失败，保障应用不崩溃。
+
+*   **进阶能力**：
+    *   **版本控制 (Versioning)**: 引入全局版本号（如 `1.0.0`），当版本不匹配时自动失效旧缓存，防止数据结构不兼容导致的运行时错误。
+    *   **数据迁移 (Migration)**: 支持定义版本迁移策略（Migration Table），在升级时自动将旧版本数据转换为新结构，实现平滑升级。
+    *   **多标签页同步**: 监听 `storage` 事件，当其他标签页修改数据时，自动同步更新当前页面的内存缓存。
+    *   **Pinia 集成 (Persistence)**: 提供自定义 Pinia 插件，只需一行配置即可实现 Store 状态的自动持久化与恢复，底层复用 Storage 的加密与版本控制能力。
 
 ```typescript
-// src/utils/storage.ts
-const NAMESPACE = 'APP_V1_';
+// src/utils/storage/index.ts
+import { createStorage } from './StorageCore';
 
-interface StorageData<T> {
-  value: T;
-  expire: number | null;
-}
-
-export const storage = {
-  set<T>(key: string, value: T, expire: number | null = null) {
-    const data: StorageData<T> = {
-      value,
-      expire: expire ? Date.now() + expire * 1000 : null,
-    };
-    localStorage.setItem(NAMESPACE + key, JSON.stringify(data));
-  },
-
-  get<T>(key: string, defaultValue: T | null = null): T | null {
-    const item = localStorage.getItem(NAMESPACE + key);
-    if (!item) return defaultValue;
-
-    try {
-      const data: StorageData<T> = JSON.parse(item);
-      if (data.expire && data.expire < Date.now()) {
-        this.remove(key);
-        return defaultValue;
-      }
-      return data.value;
-    } catch (e) {
-      return defaultValue;
+// 导出默认实例 (localStorage)
+export const ls = createStorage(localStorage, {
+  prefixKey: 'VUE_ADMIN_LS_',
+  encrypt: import.meta.env.PROD, // 生产环境自动加密
+  timeout: 60 * 60 * 24 * 7,     // 默认 7 天过期
+  version: '2.0.0',              // 当前数据版本
+  migrations: {                  // 数据迁移策略
+    '1.0.0': (oldData) => {
+      // 将旧版 { theme: 'dark' } 迁移为 { appearance: { mode: 'dark' } }
+      return { appearance: { mode: oldData.theme } };
     }
-  },
+  }
+});
 
-  remove(key: string) {
-    localStorage.removeItem(NAMESPACE + key);
-  },
+// 使用示例 1：直接调用
+ls.set('settings', { theme: 'dark' });
+const settings = ls.get('settings'); // 优先命中内存，若版本不匹配则触发迁移
 
-  clear() {
-    localStorage.clear();
-  },
-};
+// 使用示例 2：配合 Pinia 自动持久化
+// src/stores/app.ts
+defineStore('app', () => {
+  const sidebar = ref(true);
+  return { sidebar };
+}, {
+  persist: { // 开启持久化
+    key: 'app_store',
+    storage: ls, // 指定使用 ls 实例
+    paths: ['sidebar'] // 仅持久化 sidebar 字段
+  }
+});
 ```
 
 ### 2.2 业务工具函数封装 (Utils)
