@@ -14,6 +14,8 @@ import { registerIcons } from './icons/bundled'
 import { dictUtils } from '@/dict'
 import { DictTag, DictSelect } from '@/components/Dict'
 
+import { piniaPersist } from '@/stores/plugins/persist'
+
 // 注册离线图标
 registerIcons()
 
@@ -27,7 +29,9 @@ addIcon('hamburger-menu-linear', {
 const app = createApp(App)
 
 // 1. 安装插件
-app.use(createPinia())
+const pinia = createPinia()
+pinia.use(piniaPersist)
+app.use(pinia)
 app.use(VueQueryPlugin, {
   queryClientConfig: {
     defaultOptions: {
