@@ -30,4 +30,6 @@ export const useAppStore = defineStore('app', () => {
     closeSidebar,
     toggleDevice,
   };
+}, {
+  persist: true
 });
