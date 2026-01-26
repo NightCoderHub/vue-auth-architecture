@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "一个以 稳定性、安全性、可解释性 为核心的 Vue 3 前端鉴权与权限架构示例 适用于真实中后台系统，也可作为 前端面试的完整讲解项目",
+  "description": "一个以 稳定性、安全性、可解释性 为核心的 Vue 3 企业级前端八层架构示例。适用于构建真实中后台系统，也可作为 前端面试的完整架构讲解项目",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
