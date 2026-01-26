@@ -8,11 +8,14 @@ import { useDictStore } from './dictStore';
  */
 export function getDictLabel(dictType: string, value: string | number | undefined, defaultValue = ''): string {
   if (value === undefined || value === null) return defaultValue;
-  
+
   const dictStore = useDictStore();
   const dicts = dictStore.dictMap[dictType];
-  
+
+  // 1. 字典数据不存在时，不仅返回默认值，还应尝试加载字典
   if (!dicts) {
+    // 异步加载字典，确保下次访问时有数据
+    dictStore.getDict(dictType);
     return defaultValue;
   }
 
@@ -31,8 +34,10 @@ export function getDictListClass(dictType: string, value: string | number | unde
 
   const dictStore = useDictStore();
   const dicts = dictStore.dictMap[dictType];
-  
+
   if (!dicts) {
+    // 异步加载字典
+    dictStore.getDict(dictType);
     return '';
   }
 
