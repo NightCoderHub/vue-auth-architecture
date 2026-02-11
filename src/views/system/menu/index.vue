@@ -95,9 +95,9 @@ defineOptions({
 
 import { ref, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { useQuery } from '@tanstack/vue-query';
 import apiProvider from "@/axios/instance";
 import type { MenuItem } from '@/api';
-import { useGetAllMenus } from '@/api/endpoints';
 import { listToTree } from '@/utils/tree';
 import MenuDialog from './components/MenuDialog.vue';
 import * as XLSX from 'xlsx';
@@ -123,7 +123,10 @@ const queryParams = ref({
 });
 
 // 使用 TanStack Query 获取数据
-const { data: menuRawData, isLoading, refetch } = useGetAllMenus();
+const { data: menuRawData, isLoading, refetch } = useQuery({
+  queryKey: ['menus'],
+  queryFn: () => apiProvider.menus.getAllMenus()
+});
 
 // 处理后的表格数据（过滤 + 树形转换）
 const tableData = computed(() => {
